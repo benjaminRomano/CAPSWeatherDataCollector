@@ -10,21 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherAPIModels", "WeatherAPIModels\WeatherAPIModels.csproj", "{D8ADE33E-53CE-4FF7-B84F-69FE0317305A}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://capsdatawall.visualstudio.com/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = WeatherDataCollector\\WeatherDataCollector.csproj
-		SccProjectName1 = WeatherDataCollector
-		SccLocalPath1 = WeatherDataCollector
-		SccProjectUniqueName2 = CAPSWeatherAPI\\CAPSWeatherAPI.csproj
-		SccProjectName2 = CAPSWeatherAPI
-		SccLocalPath2 = CAPSWeatherAPI
-		SccProjectUniqueName3 = WeatherAPIModels\\WeatherAPIModels.csproj
-		SccProjectName3 = WeatherAPIModels
-		SccLocalPath3 = WeatherAPIModels
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
