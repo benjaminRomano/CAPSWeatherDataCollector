@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherDataCollector", "WeatherDataCollector\WeatherDataCollector.csproj", "{FF56D646-C2D4-4870-BEE7-2EE84D8B4825}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CAPSWeatherAPI", "CAPSWeatherAPI\CAPSWeatherAPI.csproj", "{36F34054-164D-4388-9EA6-6E582A9920C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherAPIModels", "WeatherAPIModels\WeatherAPIModels.csproj", "{D8ADE33E-53CE-4FF7-B84F-69FE0317305A}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 4
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://capsdatawall.visualstudio.com/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = WeatherDataCollector\\WeatherDataCollector.csproj
+		SccProjectName1 = WeatherDataCollector
+		SccLocalPath1 = WeatherDataCollector
+		SccProjectUniqueName2 = CAPSWeatherAPI\\CAPSWeatherAPI.csproj
+		SccProjectName2 = CAPSWeatherAPI
+		SccLocalPath2 = CAPSWeatherAPI
+		SccProjectUniqueName3 = WeatherAPIModels\\WeatherAPIModels.csproj
+		SccProjectName3 = WeatherAPIModels
+		SccLocalPath3 = WeatherAPIModels
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FF56D646-C2D4-4870-BEE7-2EE84D8B4825}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF56D646-C2D4-4870-BEE7-2EE84D8B4825}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF56D646-C2D4-4870-BEE7-2EE84D8B4825}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF56D646-C2D4-4870-BEE7-2EE84D8B4825}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36F34054-164D-4388-9EA6-6E582A9920C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36F34054-164D-4388-9EA6-6E582A9920C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36F34054-164D-4388-9EA6-6E582A9920C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36F34054-164D-4388-9EA6-6E582A9920C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8ADE33E-53CE-4FF7-B84F-69FE0317305A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8ADE33E-53CE-4FF7-B84F-69FE0317305A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8ADE33E-53CE-4FF7-B84F-69FE0317305A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8ADE33E-53CE-4FF7-B84F-69FE0317305A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
