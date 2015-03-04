@@ -9,5 +9,11 @@ namespace WeatherAPIModels.Constants
             Name = "Radar",
             FileType = FileTypeDefinitions.GifFileType
         };
+
+        public static KMLDataType TemperatureDataType = new KMLDataType()
+        {
+            Name = "Temperature",
+            FileType = FileTypeDefinitions.KMZFileType
+        };
     }
 }

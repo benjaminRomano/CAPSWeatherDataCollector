@@ -64,7 +64,17 @@ namespace WeatherDataCollector.KMLStreams
 
                 if (outputKMLStream.KMLData.DataType.FileType.RequiresKMLFileCreation)
                 {
-                    KMLFileCreator.CreateKMLFile(outputKMLStream.KMLData.DataType, outputKMLStream.KMLData.UseableUrl, this.FilePath);
+                    KMLFileCreator.CreateKMLFile(outputKMLStream.KMLData.DataType, outputKMLStream.KMLData.UseableUrl,
+                        this.FilePath);
+                }
+                else
+                {
+                    var success = RequestHelper.DownloadFile(outputKMLStream.KMLData.UseableUrl, this.FilePath);
+                    if (!success)
+                    {
+                        Console.WriteLine("Latest could not download file");
+                        return;
+                    }
                 }
 
 

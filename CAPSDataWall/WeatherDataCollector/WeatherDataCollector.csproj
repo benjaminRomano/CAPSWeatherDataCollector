@@ -98,6 +98,7 @@
     <Compile Include="Constants\WeatherDataConstants.cs" />
     <Compile Include="KMLCollector\ICollector.cs" />
     <Compile Include="KMLCollector\RadarCollector.cs" />
+    <Compile Include="KMLCollector\TemperatureCollector.cs" />
     <Compile Include="KMLFormats\KMLFileCreator.cs" />
     <Compile Include="KMLFormats\kml.cs" />
     <Compile Include="KMLFormats\KMLStreamDescription.cs" />

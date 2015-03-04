@@ -1,27 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Net;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WeatherAPIModels;
+using WeatherAPIModels.Constants;
 using WeatherAPIModels.Models;
-using WeatherDataCollector.Constants;
 using WeatherDataCollector.KMLFormats;
 using WeatherDataCollector.Requests;
 using WeatherDataCollector.StorageProvider;
 
 namespace WeatherDataCollector.KMLCollector
 {
-    class RadarCollector : ICollector
+    public class TemperatureCollector : ICollector
     {
-
         private IStorageProvider StorageProvider { get; set; }
         private KMLStreamDescription StreamDescription { get; set; }
         private Timer Collector { get; set; }
         private WeatherDataAPIClient Client { get; set; }
 
-        public RadarCollector(IPermanentStorageProvider storageProvider, KMLStreamDescription streamDescription)
+        public TemperatureCollector(IPermanentStorageProvider storageProvider, KMLStreamDescription streamDescription)
         {
             this.StorageProvider = storageProvider;
             this.StreamDescription = streamDescription;
@@ -50,17 +50,18 @@ namespace WeatherDataCollector.KMLCollector
 
                 var tempFileName = Path.GetTempFileName();
 
-                var radarDataResponse = NOAARequests.RadarDataRequest(StorageProvider,tempFileName);
-                if (!radarDataResponse)
+                var temperatureDataResponse = NOAARequests.GetTemperatureData(StorageProvider,tempFileName);
+
+                if (!temperatureDataResponse)
                 {
-                    Console.WriteLine("Could not get Radar Data in Radar Collector!");
+                    Console.WriteLine("Could not get Radar Data in Temperature Collector!");
                     return;
                 }
 
                 var addParams = new StorageProviderAddParams()
                 {
                     ServerFolderName = this.StreamDescription.Type.Name,
-                    ServerFileName = sanatizedCurrentTime + ".gif",
+                    ServerFileName = sanatizedCurrentTime + ".kmz",
                     LocalFileName = tempFileName,
                     ContentType = this.StreamDescription.Type.FileType.ContentType
                 };
@@ -71,7 +72,9 @@ namespace WeatherDataCollector.KMLCollector
 
                 //Set useable url to null if storage provider doesn't support it
                 string useableUrl = null;
-                if (StorageProvider is IKMLUseableStorageProvider)
+
+                if (!this.StreamDescription.Type.FileType.RequiresKMLFileCreation
+                    || StorageProvider is IKMLUseableStorageProvider)
                 {
                     useableUrl = storageUrl;
                 }
@@ -79,21 +82,21 @@ namespace WeatherDataCollector.KMLCollector
                 var kmlData = new KMLData
                 {
                     CreatedAt = sanatizedCurrentTime,
-                    FileName = sanatizedCurrentTime + ".gif",
+                    FileName = sanatizedCurrentTime + "." + this.StreamDescription.Type.FileType.Name,
                     StorageUrl = storageUrl,
                     UseableUrl = useableUrl,
-                    DataType = StreamDescription.Type
+                    DataType = this.StreamDescription.Type
                 };
 
                 var response = await this.Client.AddKMLData(kmlData);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Could not update stream status!");
+                    Console.WriteLine("Could not update kml stream!");
                     return;
                 }
 
-                Console.WriteLine("Radar data uploaded to API!");
+                Console.WriteLine("Temperature data uploaded to API!");
                 kmlData = await response.Content.ReadAsAsync<KMLData>();
 
                 response  = await Client.UpdateKMLStream(this.StreamDescription,kmlData.ID);
