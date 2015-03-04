@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WeatherAPIModels
+namespace WeatherAPIModels.Models
 {
     public class KMLData
     {
@@ -12,7 +9,11 @@ namespace WeatherAPIModels
         public string StorageUrl { get; set; }
         public string UseableUrl { get; set; }
         public string FileName { get; set; }
-        public KMLDataType Type { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        public int DataTypeID { get; set; }
+
+        [ForeignKey("DataTypeID")]
+        public virtual KMLDataType DataType { get; set; }
     }
 }

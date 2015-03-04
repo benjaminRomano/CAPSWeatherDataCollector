@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using WeatherAPIModels;
+using WeatherAPIModels.Models;
 using WeatherDataCollector.Constants;
 using WeatherDataCollector.KMLFormats;
 using WeatherDataCollector.Requests;
@@ -38,7 +39,7 @@ namespace WeatherDataCollector.KMLStreams
 
 
                 //Update output KML Stream with input KML Data
-                response = await this.Client.UpdateStreamStatus(this.OutputStreamDescription, 
+                response = await this.Client.UpdateKMLStream(this.OutputStreamDescription, 
                     inputKMLStream.KMLData.ID);
 
 
@@ -60,7 +61,11 @@ namespace WeatherDataCollector.KMLStreams
 
                 Console.WriteLine("Updating {0} with latest data", this.FilePath);
                 File.Delete(this.FilePath);
-                KMLFileCreator.CreateKMLFile(outputKMLStream.Type, outputKMLStream.KMLData.UseableUrl, this.FilePath);
+
+                if (outputKMLStream.KMLData.DataType.FileType.RequiresKMLFileCreation)
+                {
+                    KMLFileCreator.CreateKMLFile(outputKMLStream.KMLData.DataType, outputKMLStream.KMLData.UseableUrl, this.FilePath);
+                }
 
 
             }, null, TimeSpan.Zero, this.UpdateFrequency);

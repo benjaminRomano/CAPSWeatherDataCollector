@@ -3,6 +3,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using WeatherAPIModels;
+using WeatherAPIModels.Constants;
+using WeatherAPIModels.Models;
 using WeatherDataCollector.Constants;
 using WeatherDataCollector.KMLFormats;
 
@@ -35,29 +37,29 @@ namespace WeatherDataCollector.Requests
 
         public async Task<HttpResponseMessage> GetKMLStream(KMLStreamDescription stream)
         {
-            var requestUri = String.Concat(WeatherAPIConstants.Root, WeatherAPIConstants.KMLStream,"?source=",stream.Source,"&type=",stream.Type,"&name=",stream.Name);
+            var requestUri = String.Concat(WeatherAPIConstants.Root, WeatherAPIConstants.KMLStream,"?source=",stream.Source,"&typeName=",stream.Type.Name,"&name=",stream.Name);
             return await Client.GetAsync(requestUri);
 
 
         }
 
-        public async Task<HttpResponseMessage> UpdateStreamStatus(KMLStreamDescription stream, int id)
+        public async Task<HttpResponseMessage> UpdateKMLStream(KMLStreamDescription stream, int kmlDataId)
         {
-            var requestUri = String.Concat(WeatherAPIConstants.Root, WeatherAPIConstants.KMLStream,WeatherAPIConstants.Update,"?source=",stream.Source,"&id=",id,"&name=",stream.Name);
+            var requestUri = String.Concat(WeatherAPIConstants.Root, WeatherAPIConstants.KMLStream,WeatherAPIConstants.Update,"?source=",stream.Source,"&kmlDataId=",kmlDataId,"&name=",stream.Name);
             return await Client.PutAsync(new Uri(requestUri),null);
          
         }
 
-        public async Task<HttpResponseMessage> UpdateStreamStatus(KMLStream streamStatus)
+        public async Task<HttpResponseMessage> UpdateKMLStream(KMLStream stream)
         {
-            var requestUri = String.Concat(WeatherAPIConstants.Root, WeatherAPIConstants.KMLStream, WeatherAPIConstants.Update,"?id=",streamStatus.ID);
-            return await Client.PutAsJsonAsync(requestUri, streamStatus);
+            var requestUri = String.Concat(WeatherAPIConstants.Root, WeatherAPIConstants.KMLStream, WeatherAPIConstants.Update,"?id=",stream.ID);
+            return await Client.PutAsJsonAsync(requestUri, stream);
 
         }
 
         public async Task<HttpResponseMessage> IncrementKMLStream(KMLStreamDescription stream)
         {
-            var requestUri = String.Concat(WeatherAPIConstants.Root, WeatherAPIConstants.KMLStream, WeatherAPIConstants.Increment, "?source=", stream.Source,"&type=",stream.Type, "&name=", stream.Name);
+            var requestUri = String.Concat(WeatherAPIConstants.Root, WeatherAPIConstants.KMLStream, WeatherAPIConstants.Increment, "?source=", stream.Source,"&typeName=",stream.Type.Name, "&name=", stream.Name);
             return await Client.PutAsync(new Uri(requestUri), null);
         }
 

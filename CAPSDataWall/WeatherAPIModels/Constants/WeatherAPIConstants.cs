@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WeatherDataCollector.Constants
+namespace  WeatherAPIModels.Constants
 {
     public static class WeatherAPIConstants
     {
@@ -14,5 +14,7 @@ namespace WeatherDataCollector.Constants
         public const string Update = "update/";
         public const string Increment = "increment/";
         public const string RootStream = "root";
+
+
     }
 }

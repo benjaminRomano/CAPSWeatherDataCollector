@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Formatting;
 using System.Web.Http;
 
 namespace CAPSWeatherAPI
@@ -13,6 +14,11 @@ namespace CAPSWeatherAPI
 
             // Web API routes
             config.MapHttpAttributeRoutes();
+
+            config.Formatters.Clear();
+            config.Formatters.Add(new JsonMediaTypeFormatter());
+            config.Formatters.Add(new XmlMediaTypeFormatter());
+            config.Formatters.Add(new FormUrlEncodedMediaTypeFormatter());
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",

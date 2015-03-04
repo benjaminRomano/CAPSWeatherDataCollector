@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WeatherAPIModels;
+using WeatherAPIModels.Models;
 using WeatherDataCollector.Constants;
 using WeatherDataCollector.KMLFormats;
 using WeatherDataCollector.Requests;
@@ -55,26 +57,19 @@ namespace WeatherDataCollector.KMLStreams
             {
                 var tempFileName = Path.GetTempFileName();
 
-                try
-                {
-                    using (var webClient = new WebClient())
-                    {
+                var downloadSuccessful = RequestHelper.DownloadFile(stream.KMLData.StorageUrl, tempFileName);
 
-                        webClient.DownloadFile(new Uri(stream.KMLData.StorageUrl), tempFileName);
-                    }
-                }
-                catch (WebException)
+                if (!downloadSuccessful)
                 {
-                    Console.WriteLine("Could not download file from Storage Provider");
                     return false;
                 }
 
                 var addParams = new StorageProviderAddParams()
                 {
-                    ServerFolderName = Enum.GetName(typeof(KMLDataType), stream.Type),
+                    ServerFolderName = stream.KMLData.DataType.Name,
                     ServerFileName = stream.KMLData.FileName,
                     LocalFileName = tempFileName,
-                    ContentType = WeatherDataConstants.ContentTypesForData[stream.Type]
+                    ContentType = stream.KMLData.DataType.FileType.ContentType
                 };
 
                 var useableUrl = this.StorageProvider.Add(addParams);

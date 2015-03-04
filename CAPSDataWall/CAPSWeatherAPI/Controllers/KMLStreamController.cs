@@ -11,21 +11,22 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using System.Web.Http.Results;
 using CAPSWeatherAPI.Contexts;
+using CAPSWeatherAPI.Services;
 using WeatherAPIModels;
+using WeatherAPIModels.Models;
 using WebGrease.Css.Ast.Selectors;
 
 namespace CAPSWeatherAPI.Controllers
 {
     public class KMLStreamController : ApiController
     {
-        private WeatherAPIContext db = new WeatherAPIContext();
 
         // GET: api/KMLStream
         [Route("api/KMLStream")]
         [HttpGet]
         public IQueryable<KMLStream> GetKMLStreams()
         {
-            return db.KMLStreams;
+            return KMLStreamService.GetAllKMLStreams();
         }
 
         //GET "api/KMLStream"
@@ -34,7 +35,8 @@ namespace CAPSWeatherAPI.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> GetKMLStream(int id)
         {
-            var kmlStream = await db.KMLStreams.FindAsync(id);
+            var kmlStream = await KMLStreamService.GetKMLStream(id);
+
             if (kmlStream == null)
             {
                 return NotFound();
@@ -47,9 +49,10 @@ namespace CAPSWeatherAPI.Controllers
         [Route("api/KMLStream")]
         [HttpGet]
         [ResponseType(typeof(KMLStream))]
-        public async Task<IHttpActionResult> GetKMLStream(KMLDataSource source, KMLDataType type, string name)
+        public async Task<IHttpActionResult> GetKMLStream(KMLDataSource source, string typeName, string name)
         {
-            KMLStream kmlStream = await GetSpecificStream(source,type,name).FirstOrDefaultAsync();
+            var kmlStream = await KMLStreamService.GetSpecificStream(source,typeName,name);
+
             if (kmlStream == null)
             {
                 return NotFound();
@@ -63,16 +66,16 @@ namespace CAPSWeatherAPI.Controllers
         // PUT: api/KMLStream/increment
         [Route("api/KMLStream/increment")]
         [HttpPut]
-        public async Task<IHttpActionResult> IncrementKMLStream(KMLDataSource source, KMLDataType type,string name)
+        public async Task<IHttpActionResult> IncrementKMLStream(KMLDataSource source, string typeName,string name)
         {
-            var currentStatus = GetSpecificStream(source,type,name).FirstOrDefault();
+            var currentStream = await KMLStreamService.GetSpecificStream(source, typeName, name);
 
             KMLData kmlData;
             //no record exists. Create record and set it to latest Data
-            if (currentStatus == null)
+            if (currentStream == null)
             {
 
-                kmlData = db.KMLData.Where(k => k.Type == type).OrderByDescending(k => k.CreatedAt).FirstOrDefault();
+                kmlData = await KMLDataService.GetLatest(typeName);
 
                 //No data exists
                 if (kmlData == null)
@@ -82,37 +85,40 @@ namespace CAPSWeatherAPI.Controllers
 
                 var newKMLStream = new KMLStream()
                 {
-                    Type = kmlData.Type,
                     Source = source,
-                    KMLData = kmlData,
+                    KMLDataID = kmlData.ID,
                     Name = name,
                     Updated = true
 
                 };
 
-                db.KMLStreams.Add(newKMLStream);
-                await db.SaveChangesAsync();
+                newKMLStream = await KMLStreamService.AddKMLStream(newKMLStream);
                 return Ok(newKMLStream);
 
             }
 
             //Get next record
-            kmlData = db.KMLData.Where(k => k.ID > currentStatus.KMLData.ID).OrderBy(k => k.ID).FirstOrDefault();
+            kmlData = await KMLDataService.GetNextRecord(currentStream.KMLData);
 
             //No new data return current
             if(kmlData == null)
             {
-                return Ok(currentStatus);
+                return Ok(currentStream);
             }
 
-            currentStatus.KMLData = kmlData;
-            currentStatus.Updated = true;
+            currentStream.KMLDataID = kmlData.ID;
+            currentStream.KMLData = kmlData;
+            currentStream.Updated = true;
+
+            var success =  await KMLStreamService.UpdateKMLStream(currentStream);
+
+            if (!success)
+            {
+                NotFound();
+            }
 
 
-            db.Entry(currentStatus).State = EntityState.Modified;
-            await db.SaveChangesAsync();
-
-            return Ok(currentStatus);
+            return Ok(currentStream);
         }
 
         // PUT: api/KMLStream/update
@@ -120,81 +126,87 @@ namespace CAPSWeatherAPI.Controllers
         [HttpPut]
         public async Task<IHttpActionResult> UpdateKMLStream(KMLDataSource source, KMLData kmlData, string name)
         {
-            if (!await db.KMLData.ContainsAsync(kmlData))
+            var exists = KMLDataService.KMLDataExists(kmlData.ID);
+            if (!exists)
             {
                 return BadRequest("KML Data not found");
             }
 
-            var currentStatus = await GetSpecificStream(source,kmlData.Type,name).FirstOrDefaultAsync();
+            var currentStream = await KMLStreamService.GetSpecificStream(source,kmlData.DataType.Name,name);
 
             //no data currently there create record
-            if (currentStatus == null)
+            if (currentStream == null)
             {
                 var newKMLStream = new KMLStream()
                 {
-                    Type = kmlData.Type,
                     Source = source,
-                    KMLData = kmlData,
+                    KMLDataID = kmlData.ID,
                     Name = name,
                     Updated = true
 
                 };
 
-                db.KMLStreams.Add(newKMLStream);
-                await db.SaveChangesAsync();
+                newKMLStream = await KMLStreamService.AddKMLStream(newKMLStream);
 
                 return Ok(newKMLStream);
             }
 
             //Record found update it
-            currentStatus.KMLData = kmlData;
-            currentStatus.Updated = true;
+            currentStream.KMLData = kmlData;
+            currentStream.Updated = true;
 
-            db.Entry(currentStatus).State = EntityState.Modified;
-            await db.SaveChangesAsync();
+            var success = await KMLStreamService.UpdateKMLStream(currentStream);
 
-            return Ok(currentStatus);
+            if (!success)
+            {
+                return NotFound();
+            }
+
+            return Ok(currentStream);
         }
 
         // PUT: api/KMLStream/update
         [Route("api/KMLStream/update")]
         [HttpPut]
-        public async Task<IHttpActionResult> UpdateKMLStream(KMLDataSource source,string name,int id)
+        public async Task<IHttpActionResult> UpdateKMLStream(KMLDataSource source,string name,int kmlDataId)
         {
-            var kmlData = await db.KMLData.FindAsync(id);
+            var kmlData = await KMLDataService.GetKMLData(kmlDataId);
             if (kmlData == null)
             {
                 return BadRequest("KML Data not found");
             }
 
-            var currentStatus = await GetSpecificStream(source, kmlData.Type, name).FirstOrDefaultAsync();
+            var currentStream = await KMLStreamService.GetSpecificStream(source, kmlData.DataType.Name, name);
 
-            //no data currently there create record
-            if (currentStatus == null)
+            //no data currently there. Create record
+            if (currentStream == null)
             {
                 var newKMLStream = new KMLStream()
                 {
-                    Type = kmlData.Type,
                     Source = source,
-                    KMLData = kmlData,
                     Name = name,
-                    Updated = true
+                    Updated = true,
+                    KMLDataID = kmlData.ID
                 };
 
-                db.KMLStreams.Add(newKMLStream);
-                await db.SaveChangesAsync();
+                newKMLStream = await KMLStreamService.AddKMLStream(newKMLStream);
 
                 return Ok(newKMLStream);
             }
 
             //Record found update it
-            currentStatus.KMLData = kmlData;
-            currentStatus.Updated = true;
+            currentStream.KMLData = kmlData;
+            currentStream.KMLDataID = kmlData.ID;
+            currentStream.Updated = true;
 
-            db.Entry(currentStatus).State = EntityState.Modified;
-            await db.SaveChangesAsync();
+            var success = await KMLStreamService.UpdateKMLStream(currentStream);
 
-            return Ok(currentStatus);
+            if (!success)
+            {
+                return NotFound();
+            }
+
+            return Ok(currentStream);
         }
 
         // PUT: api/KMLStream/5
@@ -213,22 +225,11 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest();
             }
 
-            db.Entry(kmlStream).State = EntityState.Modified;
+            var success = await KMLStreamService.UpdateKMLStream(kmlStream);
 
-            try
+            if (!success)
             {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!KMLStreamExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -246,9 +247,16 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest(ModelState);
             }
 
+            var specificStream = await KMLStreamService.GetSpecificStream(kmlStream.Source, kmlStream.KMLData.DataType.Name, kmlStream.Name);
+
+            if (specificStream == null) 
+            {
+                return BadRequest("Data already exists");
+            }
+
             kmlStream.Updated = true;
-            db.KMLStreams.Add(kmlStream);
-            await db.SaveChangesAsync();
+
+            kmlStream = await KMLStreamService.AddKMLStream(kmlStream);
 
             return CreatedAtRoute("DefaultApi", new { id = kmlStream.ID }, kmlStream);
         }
@@ -259,36 +267,16 @@ namespace CAPSWeatherAPI.Controllers
         [HttpDelete]
         public async Task<IHttpActionResult> DeleteKMLStream(int id)
         {
-            KMLStream kmlStream = await db.KMLStreams.FindAsync(id);
+            var kmlStream = await KMLStreamService.GetKMLStream(id);
+
             if (kmlStream == null)
             {
                 return NotFound();
             }
 
-            db.KMLStreams.Remove(kmlStream);
-            await db.SaveChangesAsync();
+            KMLStreamService.DeleteKMLStream(kmlStream);
 
             return Ok(kmlStream);
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        private bool KMLStreamExists(int id)
-        {
-            return db.KMLStreams.Count(e => e.ID == id) > 0;
-        }
-
-        private IQueryable<KMLStream> GetSpecificStream(KMLDataSource source, KMLDataType type, string name)
-        {
-            return db.KMLStreams.Where(c => c.Source == source && c.Type == type && c.Name == name);
-        }
-
     }
 }

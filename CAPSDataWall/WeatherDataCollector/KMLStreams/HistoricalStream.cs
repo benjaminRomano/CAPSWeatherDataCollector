@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WeatherAPIModels;
+using WeatherAPIModels.Models;
 using WeatherDataCollector.Constants;
 using WeatherDataCollector.KMLFormats;
 using WeatherDataCollector.Requests;
@@ -52,10 +53,10 @@ namespace WeatherDataCollector.KMLStreams
                 if (inputKMLStream != null && inputKMLStream.Updated)
                 {
                     inputKMLStream.Updated = false;
-                    this.Client.UpdateStreamStatus(inputKMLStream);
+                    await this.Client.UpdateKMLStream(inputKMLStream);
 
                     //Update data from inputStreamDescription
-                    response = await Client.UpdateStreamStatus(this.OutputStreamDescription, inputKMLStream.KMLData.ID);
+                    response = await Client.UpdateKMLStream(this.OutputStreamDescription, inputKMLStream.KMLData.ID);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -88,7 +89,7 @@ namespace WeatherDataCollector.KMLStreams
 
                 Console.WriteLine("Updating {0} with historical data", this.FilePath);
                 File.Delete(this.FilePath);
-                KMLFileCreator.CreateKMLFile(outputKMLStream.Type, outputKMLStream.KMLData.UseableUrl, this.FilePath);
+                KMLFileCreator.CreateKMLFile(outputKMLStream.KMLData.DataType, outputKMLStream.KMLData.UseableUrl, this.FilePath);
 
             }, null, TimeSpan.Zero, this.UpdateFrequency);
 

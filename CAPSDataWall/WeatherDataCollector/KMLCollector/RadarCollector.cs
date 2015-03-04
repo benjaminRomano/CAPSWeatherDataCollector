@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using WeatherAPIModels;
+using WeatherAPIModels.Models;
 using WeatherDataCollector.Constants;
 using WeatherDataCollector.KMLFormats;
 using WeatherDataCollector.Requests;
@@ -40,7 +41,7 @@ namespace WeatherDataCollector.KMLCollector
             {
                 var currentTime = DateTime.Now;
 
-                if (currentTime.Minute % 10 != 0)
+                if (currentTime.Minute % 1 != 0)
                 {
                     return;
                 }
@@ -58,16 +59,15 @@ namespace WeatherDataCollector.KMLCollector
 
                 var addParams = new StorageProviderAddParams()
                 {
-                    ServerFolderName = Enum.GetName(typeof (KMLDataType), KMLDataType.Radar),
+                    ServerFolderName = this.StreamDescription.Type.Name,
                     ServerFileName = sanatizedCurrentTime + ".gif",
                     LocalFileName = tempFileName,
-                    ContentType = WeatherDataConstants.ContentTypesForData[KMLDataType.Radar]
+                    ContentType = this.StreamDescription.Type.FileType.ContentType
                 };
 
                 var storageUrl = StorageProvider.Add(addParams);
 
                 File.Delete(tempFileName);
-
 
                 //Set useable url to null if storage provider doesn't support it
                 string useableUrl = null;
@@ -82,7 +82,7 @@ namespace WeatherDataCollector.KMLCollector
                     FileName = sanatizedCurrentTime + ".gif",
                     StorageUrl = storageUrl,
                     UseableUrl = useableUrl,
-                    Type = KMLDataType.Radar
+                    DataType = StreamDescription.Type
                 };
 
                 var response = await this.AddRadarData(kmlData);
@@ -96,7 +96,7 @@ namespace WeatherDataCollector.KMLCollector
                 Console.WriteLine("Radar data uploaded to API!");
                 kmlData = await response.Content.ReadAsAsync<KMLData>();
 
-                response  = await Client.UpdateStreamStatus(this.StreamDescription,kmlData.ID);
+                response  = await Client.UpdateKMLStream(this.StreamDescription,kmlData.ID);
 
                 if (!response.IsSuccessStatusCode)
                 {

@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WeatherAPIModels;
+using WeatherAPIModels.Constants;
+using WeatherAPIModels.Models;
 using WeatherDataCollector.Constants;
 using WeatherDataCollector.KMLCollector;
 using WeatherDataCollector.KMLFormats;
@@ -19,16 +21,17 @@ namespace WeatherDataCollector
     {
         static void Main(string[] args)
         {
-            //TODO: Reduce code duplication between latest and historical stream
+            //TODO: Remove all mention of dbContext from Controllers in webAPI
+            //TODO: Add Unique indexes
 
             //Initialize KML Stream Descriptions
-            var latestRadarRoot = new KMLStreamDescription(KMLDataSource.Latest, KMLDataType.Radar, WeatherAPIConstants.RootStream);
+            var latestRadarRoot = new KMLStreamDescription(KMLDataSource.Latest, KMLDataTypeDefinitions.RadarDataType, WeatherAPIConstants.RootStream);
 
-            var historicalRadarRoot = new KMLStreamDescription(KMLDataSource.Historical, KMLDataType.Radar, WeatherAPIConstants.RootStream);
+            var historicalRadarRoot = new KMLStreamDescription(KMLDataSource.Historical, KMLDataTypeDefinitions.RadarDataType, WeatherAPIConstants.RootStream);
 
-            var webRadarRoot = new KMLStreamDescription(KMLDataSource.Web, KMLDataType.Radar, WeatherAPIConstants.RootStream);
+            var webRadarRoot = new KMLStreamDescription(KMLDataSource.Web, KMLDataTypeDefinitions.RadarDataType, WeatherAPIConstants.RootStream);
 
-            var serverRadarRoot = new KMLStreamDescription(KMLDataSource.Server, KMLDataType.Radar, WeatherAPIConstants.RootStream);
+            var serverRadarRoot = new KMLStreamDescription(KMLDataSource.Server, KMLDataTypeDefinitions.RadarDataType, WeatherAPIConstants.RootStream);
             
 
             //Initialize Storage Providers
@@ -37,11 +40,9 @@ namespace WeatherDataCollector
 
             IKMLUseableStorageProvider kmlUseableStorageProvider = new ImgurStorageProvider(ImgurConstants.ClientId);
 
-
             //Start Collectors
             var radarCollector = new RadarCollector(storageProvider,serverRadarRoot);
             radarCollector.StartCollector();
-
 
             //Start Streams
             var latestRadarStream = new LatestStream(kmlUseableStorageProvider, serverRadarRoot, latestRadarRoot,
@@ -56,7 +57,6 @@ namespace WeatherDataCollector
 
 
             Console.ReadLine();
-
         }
     }
 }

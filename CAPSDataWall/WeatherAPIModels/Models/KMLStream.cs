@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WeatherAPIModels
+namespace WeatherAPIModels.Models
 {
     public class KMLStream
     {
         public int ID { get; set; }
         public KMLDataSource Source { get; set; }
-        public KMLDataType Type { get; set; }
         public string Name { get; set; }
         public bool Updated { get; set; }
 
+        public int KMLDataID { get; set; }
+
+        [ForeignKey("KMLDataID")]
         public virtual KMLData KMLData { get; set; }
     }
 }

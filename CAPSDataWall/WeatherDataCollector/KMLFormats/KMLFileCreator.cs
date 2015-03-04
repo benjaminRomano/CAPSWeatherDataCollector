@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using WeatherAPIModels;
+using WeatherAPIModels.Constants;
+using WeatherAPIModels.Models;
 
 namespace WeatherDataCollector.KMLFormats
 {
@@ -16,7 +18,7 @@ namespace WeatherDataCollector.KMLFormats
 
         public static void CreateKMLFile(KMLDataType type, string url,string fileName)
         {
-            if (type == KMLDataType.Radar)
+            if (type.Name == KMLDataTypeDefinitions.RadarDataType.Name)
             {
                 CreateKMLFile(GenerateRadarKML(url), fileName);
             }

@@ -11,47 +11,38 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using CAPSWeatherAPI.Contexts;
+using CAPSWeatherAPI.Services;
 using WeatherAPIModels;
+using WeatherAPIModels.Models;
 
 namespace CAPSWeatherAPI.Controllers
 {
     public class KMLDataController : ApiController
     {
-        private WeatherAPIContext db = new WeatherAPIContext();
-
-
 
         //Expects date in date.toUTCString() format
         //returns kmlData at time 
         [Route("api/KMLData/")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetDataAtTime(string dateString,KMLDataType type)
+        public async Task<IHttpActionResult> GetDataAtTime(string dateString,string typeName)
         {
 
             var targetDate = DateTime.Parse(dateString);
-            var nearestDiffNulllable = db.KMLData.Where(c=> c.Type == type).Min(c => SqlFunctions.DateDiff("minute", c.CreatedAt, targetDate));
 
-            if (nearestDiffNulllable == null)
+            var kmlData = await KMLDataService.GetDataAtTime(targetDate, typeName);
+
+            if (kmlData == null)
             {
                 return NotFound();
             }
 
-            var nearestDiff = nearestDiffNulllable.GetValueOrDefault();
-
-            //Return null if no object in range
-            if (Math.Abs(nearestDiff) > 30)
-            {
-                return NotFound();
-            }
-
-            var kmlData = await db.KMLData.Where(c=> c.Type == type).FirstAsync(c => SqlFunctions.DateDiff("minute", c.CreatedAt, targetDate) == nearestDiff);
             return Ok(kmlData);
         }
 
         // GET: api/KMLData
         public IQueryable<KMLData> GetKMLData()
         {
-            return db.KMLData;
+            return KMLDataService.GetAllKMLData();
         }
 
         // GET: api/KMLData/5
@@ -60,7 +51,7 @@ namespace CAPSWeatherAPI.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> GetKMLData(int id)
         {
-            KMLData kmlData = await db.KMLData.FindAsync(id);
+            KMLData kmlData = await KMLDataService.GetKMLData(id);
             if (kmlData == null)
             {
                 return NotFound();
@@ -85,22 +76,11 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest();
             }
 
-            db.Entry(kmlData).State = EntityState.Modified;
+            var success = await KMLDataService.UpdateKMLData(kmlData);
 
-            try
+            if (!success)
             {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!KMLDataExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -116,10 +96,7 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            db.KMLData.Add(kmlData);
-            await db.SaveChangesAsync();
-
-            kmlData = await db.KMLData.OrderByDescending(c => c.ID).FirstAsync();
+            kmlData = await KMLDataService.AddKMLData(kmlData);
 
             return Ok(kmlData);
         }
@@ -130,30 +107,15 @@ namespace CAPSWeatherAPI.Controllers
         [HttpDelete]
         public async Task<IHttpActionResult> DeleteKMLData(int id)
         {
-            KMLData kmlData = await db.KMLData.FindAsync(id);
+            KMLData kmlData = await KMLDataService.GetKMLData(id);
             if (kmlData == null)
             {
                 return NotFound();
             }
 
-            db.KMLData.Remove(kmlData);
-            await db.SaveChangesAsync();
+            KMLDataService.DeleteKMLData(kmlData); 
 
             return Ok(kmlData);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        private bool KMLDataExists(int id)
-        {
-            return db.KMLData.Count(e => e.ID == id) > 0;
         }
     }
 }

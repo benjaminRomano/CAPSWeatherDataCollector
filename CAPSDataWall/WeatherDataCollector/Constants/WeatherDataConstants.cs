@@ -12,17 +12,10 @@ namespace WeatherDataCollector.Constants
 
         public const string UrlContent = "application/x-www-form-urlencoded";
         public const string JsonContent = "application/x-www-form-urlencoded";
-        public const string ImgContent = "image/gif";
+        public const string GifContent = "image/gif";
 
         public const string LatestRadarFileName = "latestRadar.kml";
         public const string HistoricalRadarFileName = "historicalRadar.kml";
 
-
-
-        public static Dictionary<KMLDataType, String> ContentTypesForData = new Dictionary<KMLDataType, string>()
-        {
-            {KMLDataType.Radar, ImgContent}
-        };
     }
-    
 }

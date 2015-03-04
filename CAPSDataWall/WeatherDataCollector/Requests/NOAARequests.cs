@@ -24,20 +24,7 @@ namespace WeatherDataCollector.Requests
 
         public static bool RadarDataRequest(IStorageProvider storageProvider,string tempFileName)
         {
-            try
-            {
-                using (var webClient = new WebClient())
-                {
-                    webClient.DownloadFile(new Uri(WeatherDataConstants.RadarDataUrl), tempFileName);
-
-                }
-            }
-            catch (WebException e)
-            {
-                return false;
-            }
-
-            return true;
+            return RequestHelper.DownloadFile(WeatherDataConstants.RadarDataUrl, tempFileName);
         }
     }
 }
