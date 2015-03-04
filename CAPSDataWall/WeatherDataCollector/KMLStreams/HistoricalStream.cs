@@ -72,7 +72,7 @@ namespace WeatherDataCollector.KMLStreams
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        Console.Write("Historical Stream failed to update");
+                        Console.WriteLine("Historical Stream failed to update");
                         return;
                     }
 

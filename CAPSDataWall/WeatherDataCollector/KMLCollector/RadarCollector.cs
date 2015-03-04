@@ -41,7 +41,7 @@ namespace WeatherDataCollector.KMLCollector
             {
                 var currentTime = DateTime.Now;
 
-                if (currentTime.Minute % 1 != 0)
+                if (currentTime.Minute % 10 == 0)
                 {
                     return;
                 }
