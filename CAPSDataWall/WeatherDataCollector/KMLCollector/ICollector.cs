@@ -10,6 +10,5 @@ namespace WeatherDataCollector.KMLCollector
     {
         void StartCollector();
         void StopCollector();
-
     }
 }

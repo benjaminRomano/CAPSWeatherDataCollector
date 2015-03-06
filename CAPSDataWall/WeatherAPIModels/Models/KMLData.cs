@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WeatherAPIModels.Models
 {
-    public class KMLData
+    public class KMLData 
     {
         public int ID { get; set; }
         public string StorageUrl { get; set; }
@@ -14,6 +14,7 @@ namespace WeatherAPIModels.Models
         public int DataTypeID { get; set; }
 
         [ForeignKey("DataTypeID")]
-        public virtual KMLDataType DataType { get; set; }
+        public KMLDataType DataType { get; set; }
+
     }
 }

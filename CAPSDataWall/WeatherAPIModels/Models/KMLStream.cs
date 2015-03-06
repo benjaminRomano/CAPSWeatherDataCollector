@@ -2,7 +2,7 @@
 
 namespace WeatherAPIModels.Models
 {
-    public class KMLStream
+    public class KMLStream 
     {
         public int ID { get; set; }
         public KMLDataSource Source { get; set; }
@@ -12,6 +12,7 @@ namespace WeatherAPIModels.Models
         public int KMLDataID { get; set; }
 
         [ForeignKey("KMLDataID")]
-        public virtual KMLData KMLData { get; set; }
+        public KMLData KMLData { get; set; }
+
     }
 }

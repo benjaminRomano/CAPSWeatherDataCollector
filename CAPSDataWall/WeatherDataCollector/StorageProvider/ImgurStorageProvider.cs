@@ -55,11 +55,6 @@ namespace WeatherDataCollector.StorageProvider
                 }
             }
         }
-
-        public string Get(string serverFolderName, string serverFileName)
-        {
-            throw new NotImplementedException();
-        }
     }
 
 }

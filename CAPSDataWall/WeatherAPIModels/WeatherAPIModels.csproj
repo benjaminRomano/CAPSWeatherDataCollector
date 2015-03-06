@@ -50,20 +50,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Constants\KMLDataTypeDefinitions.cs" />
-    <Compile Include="Constants\FileTypeDefinitions.cs" />
+    <Compile Include="ConvertServices\SpecificConverterService.cs" />
+    <Compile Include="SpecificModels\FileTypes\BaseFileType.cs" />
+    <Compile Include="SpecificModels\FileTypes\KMLFileType.cs" />
+    <Compile Include="SpecificModels\FileTypes\GifFileType.cs" />
+    <Compile Include="SpecificModels\FileTypes\KMZFileType.cs" />
+    <Compile Include="SpecificModels\FileTypes\SpecificFileType.cs" />
+    <Compile Include="SpecificModels\KMLDataTypes\BaseKMLDataType.cs" />
+    <Compile Include="SpecificModels\KMLDataTypes\RadarKMLDataType.cs" />
     <Compile Include="Models\FileType.cs" />
-    <Compile Include="Models\KMLDataEnums.cs" />
+    <Compile Include="SpecificModels\KMLDataTypes\SpecificKMLDataType.cs" />
+    <Compile Include="SpecificModels\KMLDataTypes\TemperatureKMLDataType.cs" />
+    <Compile Include="KMLFormatters\kml.cs" />
+    <Compile Include="KMLFormatters\KMLFileCreator.cs" />
+    <Compile Include="Models\KMLDataSource.cs" />
     <Compile Include="Models\KMLDataType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\KMLData.cs" />
     <Compile Include="Models\KMLStream.cs" />
     <Compile Include="Constants\WeatherAPIConstants.cs" />
+    <Compile Include="StreamDescriptions\KMLStreamDescription.cs" />
+    <Compile Include="StreamNames\BaseStreamName.cs" />
+    <Compile Include="StreamNames\RootStreamName.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

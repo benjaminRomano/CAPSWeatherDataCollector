@@ -11,5 +11,6 @@ namespace WeatherAPIModels.Models
         public string Name { get; set; }
         public string ContentType  { get; set; }
         public bool RequiresKMLFileCreation { get; set; }
+
     }
 }

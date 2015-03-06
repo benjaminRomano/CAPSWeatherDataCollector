@@ -1,23 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using WeatherAPIModels;
+using WeatherAPIModels.KMLFormatters;
 using WeatherAPIModels.Models;
-using WeatherDataCollector.Constants;
-using WeatherDataCollector.KMLFormats;
-using WeatherDataCollector.Requests;
-using WeatherDataCollector.Responses;
+using WeatherAPIModels.StreamDescriptions;
 using WeatherDataCollector.StorageProvider;
 
-
-namespace WeatherDataCollector.KMLStreams
+namespace WeatherDataCollector.Streams
 {
     class HistoricalStream : BaseStream
     {
@@ -45,7 +36,7 @@ namespace WeatherDataCollector.KMLStreams
 
                 if (response.IsSuccessStatusCode)
                 {
-                    inputKMLStream = await response.Content.ReadAsAsync<KMLStream>();
+                    inputKMLStream =  await response.Content.ReadAsAsync<KMLStream>();
                 }
 
                 KMLStream outputKMLStream;
@@ -86,10 +77,6 @@ namespace WeatherDataCollector.KMLStreams
                 {
                     Console.WriteLine("Could not write to local history stream file!");
                 }
-
-                Console.WriteLine("Updating {0} with historical data", this.FilePath);
-                File.Delete(this.FilePath);
-                KMLFileCreator.CreateKMLFile(outputKMLStream.KMLData.DataType, outputKMLStream.KMLData.UseableUrl, this.FilePath);
 
             }, null, TimeSpan.Zero, this.UpdateFrequency);
 

@@ -1,17 +1,14 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Threading;
-using System.Threading.Tasks;
-using WeatherAPIModels;
+using WeatherAPIModels.KMLFormatters;
 using WeatherAPIModels.Models;
-using WeatherDataCollector.Constants;
-using WeatherDataCollector.KMLFormats;
+using WeatherAPIModels.StreamDescriptions;
 using WeatherDataCollector.Requests;
 using WeatherDataCollector.StorageProvider;
 
-namespace WeatherDataCollector.KMLStreams
+namespace WeatherDataCollector.Streams
 {
     public class LatestStream : BaseStream
     {
@@ -58,25 +55,6 @@ namespace WeatherDataCollector.KMLStreams
                 {
                     Console.WriteLine("Could not write to local latest stream file!");
                 }
-
-                Console.WriteLine("Updating {0} with latest data", this.FilePath);
-                File.Delete(this.FilePath);
-
-                if (outputKMLStream.KMLData.DataType.FileType.RequiresKMLFileCreation)
-                {
-                    KMLFileCreator.CreateKMLFile(outputKMLStream.KMLData.DataType, outputKMLStream.KMLData.UseableUrl,
-                        this.FilePath);
-                }
-                else
-                {
-                    var success = RequestHelper.DownloadFile(outputKMLStream.KMLData.UseableUrl, this.FilePath);
-                    if (!success)
-                    {
-                        Console.WriteLine("Latest could not download file");
-                        return;
-                    }
-                }
-
 
             }, null, TimeSpan.Zero, this.UpdateFrequency);
         }

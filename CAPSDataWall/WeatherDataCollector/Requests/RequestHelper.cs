@@ -19,7 +19,7 @@ namespace WeatherDataCollector.Requests
                     webClient.DownloadFile(new Uri(url), fileName);
                 }
             }
-            catch (WebException)
+            catch (Exception)
             {
                 Console.WriteLine("Could not download file!");
                 return false;

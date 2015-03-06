@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Mime;
-using System.Reflection.Emit;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WeatherAPIModels;
+using WeatherAPIModels.KMLFormatters;
 using WeatherAPIModels.Models;
-using WeatherDataCollector.Constants;
-using WeatherDataCollector.KMLFormats;
+using WeatherAPIModels.StreamDescriptions;
 using WeatherDataCollector.Requests;
 using WeatherDataCollector.StorageProvider;
 
-namespace WeatherDataCollector.KMLStreams
+namespace WeatherDataCollector.Streams
 {
     public abstract class BaseStream : IStream
     {
@@ -53,17 +46,17 @@ namespace WeatherDataCollector.KMLStreams
 
         protected virtual async Task<bool> UpdateLocalStreamFile(KMLStream stream)
         {
-            if (stream.KMLData.UseableUrl == null)
+            var tempFileName = Path.GetTempFileName();
+
+            var downloadSuccessful = RequestHelper.DownloadFile(stream.KMLData.StorageUrl, tempFileName);
+
+            if (!downloadSuccessful)
             {
-                var tempFileName = Path.GetTempFileName();
+                return false;
+            }
 
-                var downloadSuccessful = RequestHelper.DownloadFile(stream.KMLData.StorageUrl, tempFileName);
-
-                if (!downloadSuccessful)
-                {
-                    return false;
-                }
-
+            if (stream.KMLData.UseableUrl == null && stream.KMLData.DataType.FileType.RequiresKMLFileCreation)
+            {
                 var addParams = new StorageProviderAddParams()
                 {
                     ServerFolderName = stream.KMLData.DataType.Name,
@@ -81,16 +74,38 @@ namespace WeatherDataCollector.KMLStreams
                 }
 
                 stream.KMLData.UseableUrl = useableUrl;
+            }
 
-                var response = await this.Client.UpdateKMLData(stream.KMLData);
+            var response = await this.Client.UpdateKMLData(stream.KMLData);
 
-                if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Could not Update KML Data with useable URL");
+                return false;
+            }
+
+            File.Delete(tempFileName);
+
+            File.Delete(this.FilePath);
+
+            if (stream.KMLData.DataType.FileType.RequiresKMLFileCreation)
+            {
+                var kmlFileCreator = new KMLFileCreator();
+
+                kmlFileCreator.CreateKMLFile(stream.KMLData.DataType, stream.KMLData.UseableUrl, this.FilePath);
+            }
+            else
+            {
+                var success = RequestHelper.DownloadFile(stream.KMLData.UseableUrl, this.FilePath);
+                if (!success)
                 {
-                    Console.WriteLine("Could not Update KML Data with useable URL");
+                    Console.WriteLine("Could not download file for stream");
                     return false;
                 }
-
-                File.Delete(tempFileName);
+                else
+                {
+                    Console.WriteLine("Stream updated!");
+                }
             }
 
             return true;

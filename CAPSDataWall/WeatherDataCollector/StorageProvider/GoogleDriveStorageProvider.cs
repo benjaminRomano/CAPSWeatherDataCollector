@@ -37,7 +37,7 @@ namespace WeatherDataCollector.StorageProvider
 
         public string Add(StorageProviderAddParams addParams)
         {
-            File body = new File();
+            var body = new File();
             body.Title = addParams.ServerFileName;
             body.MimeType = addParams.ContentType;
 
@@ -57,7 +57,7 @@ namespace WeatherDataCollector.StorageProvider
                 FilesResource.InsertMediaUpload request = this.driveService.Files.Insert(body, stream, addParams.ContentType);
                 request.Upload();
 
-                File file = request.ResponseBody;
+                var file = request.ResponseBody;
 
                 Console.WriteLine("New File Created: {0} with ID {1} ", file.Title, file.Id);
 
@@ -68,11 +68,6 @@ namespace WeatherDataCollector.StorageProvider
                 Console.WriteLine("An error occurred: " + e.Message);
                 return null;
             }
-        }
-
-        public string Get(string serverFolderName, string ServerFileName)
-        {
-            throw new NotImplementedException();
         }
 
         private string FindFolderIdByName(string folderName)

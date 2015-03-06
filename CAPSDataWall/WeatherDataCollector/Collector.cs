@@ -9,11 +9,14 @@ using System.Threading.Tasks;
 using WeatherAPIModels;
 using WeatherAPIModels.Constants;
 using WeatherAPIModels.Models;
+using WeatherAPIModels.SpecificModels.KMLDataTypes;
+using WeatherAPIModels.StreamDescriptions;
+using WeatherAPIModels.StreamNames;
 using WeatherDataCollector.Constants;
 using WeatherDataCollector.KMLCollector;
-using WeatherDataCollector.KMLFormats;
-using WeatherDataCollector.KMLStreams;
+using WeatherDataCollector.Requests;
 using WeatherDataCollector.StorageProvider;
+using WeatherDataCollector.Streams;
 
 namespace WeatherDataCollector
 {
@@ -21,20 +24,24 @@ namespace WeatherDataCollector
     {
         static void Main(string[] args)
         {
-            //TODO: Generalize Stream Updater code
+            //TODO: De-abstract Context from Controller
+            //TODO: Improve IStream Code
+
+            //Initialize KMLDataTypes
+            var radarKMLDataType = new RadarKMLDataType();
+            var temperatureKMLDataType = new TemperatureKMLDataType();
+
+            //Initialize Stream Names
+            var rootStreamName = new RootStreamName();
 
             //Initialize KML Stream Descriptions
-            var latestRadarRoot = new KMLStreamDescription(KMLDataSource.Latest, KMLDataTypeDefinitions.RadarDataType, WeatherAPIConstants.RootStream);
+            var latestRadarRoot = new KMLStreamDescription(KMLDataSource.Latest, radarKMLDataType, rootStreamName);
+            var historicalRadarRoot = new KMLStreamDescription(KMLDataSource.Historical, radarKMLDataType, rootStreamName);
+            var webRadarRoot = new KMLStreamDescription(KMLDataSource.Web, radarKMLDataType, rootStreamName);
+            var serverRadarRoot = new KMLStreamDescription(KMLDataSource.Server, radarKMLDataType, rootStreamName);
 
-            var historicalRadarRoot = new KMLStreamDescription(KMLDataSource.Historical, KMLDataTypeDefinitions.RadarDataType, WeatherAPIConstants.RootStream);
-
-            var webRadarRoot = new KMLStreamDescription(KMLDataSource.Web, KMLDataTypeDefinitions.RadarDataType, WeatherAPIConstants.RootStream);
-
-            var serverRadarRoot = new KMLStreamDescription(KMLDataSource.Server, KMLDataTypeDefinitions.RadarDataType, WeatherAPIConstants.RootStream);
-
-
-            var serverTemperatureRoot = new KMLStreamDescription(KMLDataSource.Server, KMLDataTypeDefinitions.TemperatureDataType, WeatherAPIConstants.RootStream);
-            var latestTemperatureRoot = new KMLStreamDescription(KMLDataSource.Latest, KMLDataTypeDefinitions.TemperatureDataType, WeatherAPIConstants.RootStream);
+            var serverTemperatureRoot = new KMLStreamDescription(KMLDataSource.Server, temperatureKMLDataType, rootStreamName);
+            var latestTemperatureRoot = new KMLStreamDescription(KMLDataSource.Latest, temperatureKMLDataType, rootStreamName);
             
 
             //Initialize Storage Providers
@@ -44,25 +51,25 @@ namespace WeatherDataCollector
             IKMLUseableStorageProvider kmlUseableStorageProvider = new ImgurStorageProvider(ImgurConstants.ClientId);
 
             //Start Collectors
-            var radarCollector = new RadarCollector(storageProvider,serverRadarRoot);
+            ICollector radarCollector = new BaseCollector(storageProvider, serverRadarRoot,TimeSpan.FromMinutes(1), time => time.Minute % 1 == 0, NOAARequests.RadarDataRequest );
             radarCollector.StartCollector();
 
-            var temperatureCollector = new TemperatureCollector(storageProvider, serverTemperatureRoot);
+            ICollector temperatureCollector = new BaseCollector(storageProvider, serverTemperatureRoot, TimeSpan.FromMinutes(1), time => time.Minute%1 == 0, NOAARequests.GetTemperatureData);
             temperatureCollector.StartCollector();
 
             //Start Streams
-            var latestRadarStream = new LatestStream(kmlUseableStorageProvider, serverRadarRoot, latestRadarRoot,
+            IStream latestRadarStream = new LatestStream(kmlUseableStorageProvider, serverRadarRoot, latestRadarRoot,
                 WeatherDataConstants.LatestRadarFileName, TimeSpan.FromMinutes(1));
 
             latestRadarStream.StartStream();
 
-            var historicalRadarStream = new HistoricalStream(kmlUseableStorageProvider,webRadarRoot,historicalRadarRoot,
+            IStream historicalRadarStream = new HistoricalStream(kmlUseableStorageProvider,webRadarRoot,historicalRadarRoot,
                 WeatherDataConstants.HistoricalRadarFileName,TimeSpan.FromMinutes(10));
 
             historicalRadarStream.StartStream();
 
 
-            var latestTemperatureStream = new LatestStream(kmlUseableStorageProvider, serverTemperatureRoot, latestTemperatureRoot, 
+            IStream latestTemperatureStream = new LatestStream(kmlUseableStorageProvider, serverTemperatureRoot, latestTemperatureRoot, 
                 WeatherDataConstants.TemperatureFileName, TimeSpan.FromMinutes(1));
 
             latestTemperatureStream.StartStream();

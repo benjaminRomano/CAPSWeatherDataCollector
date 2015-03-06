@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WeatherAPIModels.Models
 {
-    public class KMLDataType
+    public class KMLDataType 
     {
         public int ID { get; set; }
         [Index(IsUnique = true)]
@@ -13,6 +13,7 @@ namespace WeatherAPIModels.Models
         public int FileTypeID { get; set; }
 
         [ForeignKey("FileTypeID")]
-        public virtual FileType FileType { get; set; }
+        public FileType FileType { get; set; }
+
     }
 }
