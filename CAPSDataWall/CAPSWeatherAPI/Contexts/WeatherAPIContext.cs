@@ -4,19 +4,34 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CAPSWeatherAPI.Services;
 using WeatherAPIModels;
 using WeatherAPIModels.Models;
 
 namespace CAPSWeatherAPI.Contexts
 {
-    public class WeatherAPIContext : DbContext 
+    public class WeatherAPIContext : IDisposable
     {
-        public WeatherAPIContext() {}
-        public DbSet<KMLData> KMLData { get; set; }
-        public DbSet<KMLStream> KMLStreams { get; set; }
+        private WeatherDataContext DataContext;
 
-        public System.Data.Entity.DbSet<KMLDataType> KMLDataTypes { get; set; }
+        public FileTypeService FileTypeService { get; private set; }
+        public KMLDataTypeService KMLDataTypeService { get; private set; }
+        public KMLStreamService KMLStreamService { get; private set; }
+        public KMLDataService KMLDataService { get; private set; }
 
-        public System.Data.Entity.DbSet<FileType> FileTypes { get; set; }
+        public WeatherAPIContext()
+        {
+            this.DataContext = new WeatherDataContext();
+            this.FileTypeService = new FileTypeService(this.DataContext);
+            this.KMLDataTypeService = new KMLDataTypeService(this.DataContext);
+            this.KMLStreamService = new KMLStreamService(this.DataContext);
+            this.KMLDataService = new KMLDataService(this.DataContext);
+
+        }
+
+        public virtual void Dispose()
+        {
+           this.DataContext.Dispose();
+        }
     }
 }

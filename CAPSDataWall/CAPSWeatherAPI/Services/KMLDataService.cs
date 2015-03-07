@@ -13,149 +13,100 @@ using WeatherAPIModels.Models;
 
 namespace CAPSWeatherAPI.Services
 {
-    public static class KMLDataService
+    public class KMLDataService
     {
+        private WeatherDataContext Context { get; set; }
 
-        public static async Task<KMLData> GetDataAtTime(DateTime targetDate, string typeName)
+        public KMLDataService(WeatherDataContext weatherAPIContext)
         {
+            this.Context = weatherAPIContext;
+        }
+
+        public async Task<KMLData> GetDataAtTime(DateTime targetDate, string typeName)
+        {
+            var nearestDataTimeDiff = await this.Context.KMLData.Where(c=> c.DataType.Name == typeName).MinAsync(c => SqlFunctions.DateDiff("minute", c.CreatedAt, targetDate));
+
+            if (nearestDataTimeDiff == null)
+            {
+                return null;
+            }
+
+            var nearestDiff = nearestDataTimeDiff.GetValueOrDefault();
+
             KMLData kmlData = null;
 
-            using (var context = new WeatherAPIContext())
+            //Only care if diff is less than or equal to 10 minutes
+            if (Math.Abs(nearestDiff) <= 10)
             {
-               var nearestDataTimeDiff = await context.KMLData.Where(c=> c.DataType.Name == typeName).MinAsync(c => SqlFunctions.DateDiff("minute", c.CreatedAt, targetDate));
-
-                if (nearestDataTimeDiff != null)
-                {
-                    var nearestDiff = nearestDataTimeDiff.GetValueOrDefault();
-
-                    //Only care if diff is less than 30 minutes
-                    if (Math.Abs(nearestDiff) <= 30)
-                    {
-                        kmlData = await context.CompleteKMLData().Where(c => c.DataType.Name == typeName)
-                            .FirstAsync(c => SqlFunctions.DateDiff("minute", c.CreatedAt, targetDate) == nearestDiff);
-                    }
-                }
+                kmlData = await this.Context.CompleteKMLData().Where(c => c.DataType.Name == typeName)
+                    .FirstAsync(c => SqlFunctions.DateDiff("minute", c.CreatedAt, targetDate) == nearestDiff);
             }
 
             return kmlData;
         }
 
-        public static async Task<KMLData> GetNextRecord(KMLData currentKMLData)
+        public async Task<KMLData> GetNextRecord(KMLData currentKMLData)
         {
-            KMLData kmlData;
-
-            using (var context = new WeatherAPIContext())
-            {
-                kmlData = await context.CompleteKMLData().Where(k => k.ID > currentKMLData.ID && k.DataTypeID == currentKMLData.DataTypeID)
-                    .OrderBy(k => k.ID).FirstOrDefaultAsync();
-            }
-
-            return kmlData;
+            return await this.Context.CompleteKMLData().Where(k => k.ID > currentKMLData.ID && k.DataTypeID == currentKMLData.DataTypeID)
+                .OrderBy(k => k.ID).FirstOrDefaultAsync();
         }
 
-        public static async Task<KMLData> GetLatest(string kmlDataTypeName)
+        public async Task<KMLData> GetLatest(string kmlDataTypeName)
         {
-            KMLData kmlData;
-
-            using (var context = new WeatherAPIContext())
-            {
-                kmlData = await context.CompleteKMLData().Where(k => k.DataType.Name == kmlDataTypeName).OrderByDescending(k => k.CreatedAt).FirstOrDefaultAsync();
-            }
-
-            return kmlData;
+            return await this.Context.CompleteKMLData().Where(k => k.DataType.Name == kmlDataTypeName).OrderByDescending(k => k.CreatedAt).FirstOrDefaultAsync();
         }
 
-        public static async Task<KMLData> AddKMLData(KMLData kmlData)
+        public async Task<KMLData> AddKMLData(KMLData kmlData)
         {
-            KMLData newKMLData;
-
-            using (var context = new WeatherAPIContext())
-            {
-                if (KMLDataTypeService.KMLDataTypeExists(kmlData.DataType.Name))
-                {
-                    var foundDataType = await KMLDataTypeService.FindKMLDataType(kmlData.DataType.Name);
-                    kmlData.DataTypeID = foundDataType.ID;
-                    kmlData.DataType = null;
-                }
-
-                context.KMLData.Add(kmlData);
-                await context.SaveChangesAsync();
-                newKMLData = await context.CompleteKMLData().FirstOrDefaultAsync(k => k.ID == kmlData.ID);
-            }
-
-            return newKMLData;
+            this.Context.KMLData.Add(kmlData);
+            await this.Context.SaveChangesAsync();
+            return await this.Context.CompleteKMLData().FirstOrDefaultAsync(k => k.ID == kmlData.ID);
         }
 
-        public static IQueryable<KMLData> GetAllKMLData()
+        public IQueryable<KMLData> GetAllKMLData()
         {
-            IQueryable<KMLData> allKMLData;
-
-            using (var context = new WeatherAPIContext())
-            {
-                allKMLData = context.CompleteKMLData();
-            }
-
-            return allKMLData;
+            return this.Context.CompleteKMLData();
         }
 
-        public static async Task<KMLData> GetKMLData(int id)
+        public async Task<KMLData> GetKMLData(int id)
         {
-            KMLData kmlData;
-
-            using (var context = new WeatherAPIContext())
-            {
-                kmlData = await context.CompleteKMLData().FirstOrDefaultAsync(k => k.ID == id);
-            }
-
-            return kmlData;
-
+            return await this.Context.CompleteKMLData().FirstOrDefaultAsync(k => k.ID == id);
         }
 
-        public static async Task<bool> UpdateKMLData(KMLData kmlData)
+        public async Task<bool> UpdateKMLData(KMLData kmlData)
         {
             var success = true;
 
-            using (var context = new WeatherAPIContext())
-            {
-                context.Entry(kmlData).State = EntityState.Modified;
+            this.Context.Entry(kmlData).State = EntityState.Modified;
 
-                try
+            try
+            {
+                await this.Context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!KMLDataExists(kmlData.ID))
                 {
-                    await context.SaveChangesAsync();
+                    success = false;
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!KMLDataExists(kmlData.ID))
-                    {
-                        success = false;
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
             }
 
             return success;
         }
 
-        public static async void DeleteKMLData(KMLData kmlData)
+        public async void DeleteKMLData(KMLData kmlData)
         {
-            using (var context = new WeatherAPIContext())
-            {
-                context.KMLData.Remove(kmlData);
-                await context.SaveChangesAsync();
-            }
+            this.Context.KMLData.Remove(kmlData);
+            await this.Context.SaveChangesAsync();
         }
 
-        public static bool KMLDataExists(int id)
+        public bool KMLDataExists(int id)
         {
-            bool exists;
-            using (var context = new WeatherAPIContext())
-            {
-                exists = context.KMLData.Count(e => e.ID == id) > 0;
-            }
-            return exists;
+            return this.Context.KMLData.Count(e => e.ID == id) > 0;
         }
     }
 }

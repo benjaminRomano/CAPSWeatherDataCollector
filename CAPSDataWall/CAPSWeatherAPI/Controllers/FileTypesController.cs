@@ -18,18 +18,19 @@ namespace CAPSWeatherAPI.Controllers
 {
     public class FileTypesController : ApiController
     {
+        private WeatherAPIContext Context = new WeatherAPIContext();
 
         // GET: api/FileTypes
         public IQueryable<FileType> GetFileTypes()
         {
-            return FileTypeService.GetAllFileTypes();
+            return this.Context.FileTypeService.GetAllFileTypes();
         }
 
         // GET: api/FileTypes/5
         [ResponseType(typeof(FileType))]
         public async Task<IHttpActionResult> GetFileType(int id)
         {
-            FileType fileType = await FileTypeService.GetFileType(id);
+            var fileType = await this.Context.FileTypeService.GetFileType(id);
 
             if (fileType == null)
             {
@@ -53,7 +54,7 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest();
             }
 
-            var success = await FileTypeService.UpdateFileType(fileType);
+            var success = await this.Context.FileTypeService.UpdateFileType(fileType);
 
             if (!success)
             {
@@ -72,7 +73,7 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            fileType = await FileTypeService.AddFileType(fileType);
+            fileType = await this.Context.FileTypeService.AddFileType(fileType);
 
             return CreatedAtRoute("DefaultApi", new { id = fileType.ID }, fileType);
         }
@@ -81,13 +82,14 @@ namespace CAPSWeatherAPI.Controllers
         [ResponseType(typeof(FileType))]
         public async Task<IHttpActionResult> DeleteFileType(int id)
         {
-            FileType fileType = await FileTypeService.GetFileType(id);
+            var fileType = await this.Context.FileTypeService.GetFileType(id);
+
             if (fileType == null)
             {
                 return NotFound();
             }
 
-            FileTypeService.DeleteFileType(fileType);
+            this.Context.FileTypeService.DeleteFileType(fileType);
             
             return Ok(fileType);
         }

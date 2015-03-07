@@ -12,108 +12,72 @@ using WeatherAPIModels.Models;
 
 namespace CAPSWeatherAPI.Services
 {
-    public static class KMLStreamService
+    public class KMLStreamService
     {
-        public static async Task<KMLStream> AddKMLStream(KMLStream kmlStream)
+        private WeatherDataContext Context { get; set; }
+
+        public KMLStreamService(WeatherDataContext context)
         {
-            KMLStream newKMLStream;
-
-            using (var context = new WeatherAPIContext())
-            {
-                context.KMLStreams.Add(kmlStream);
-                await context.SaveChangesAsync();
-                newKMLStream = await context.CompleteKMLStreams().FirstOrDefaultAsync(k => k.ID == kmlStream.ID);
-            }
-
-            return newKMLStream;
+            this.Context = context;
         }
 
-        public static IQueryable<KMLStream> GetAllKMLStreams()
+        public async Task<KMLStream> AddKMLStream(KMLStream kmlStream)
         {
-            IQueryable<KMLStream> allKMLStreams;
-
-            using (var context = new WeatherAPIContext())
-            {
-                allKMLStreams = context.CompleteKMLStreams();
-            }
-
-            return allKMLStreams;
+                this.Context.KMLStreams.Add(kmlStream);
+                await this.Context.SaveChangesAsync();
+                return await this.Context.CompleteKMLStreams().FirstOrDefaultAsync(k => k.ID == kmlStream.ID);
         }
 
-        public static async Task<KMLStream> GetKMLStream(int id)
+        public IQueryable<KMLStream> GetAllKMLStreams()
         {
-            KMLStream kmlStream;
-
-            using (var context = new WeatherAPIContext())
-            {
-                kmlStream = await context.CompleteKMLStreams().FirstOrDefaultAsync();
-            }
-
-            return kmlStream;
-
+            return this.Context.CompleteKMLStreams();
         }
 
-        public static async Task<bool> UpdateKMLStream(KMLStream kmlStream)
+        public async Task<KMLStream> GetKMLStream(int id)
+        {
+            return await this.Context.CompleteKMLStreams().FirstOrDefaultAsync(k => k.ID == id);
+        }
+
+        public async Task<bool> UpdateKMLStream(KMLStream kmlStream)
         {
             var success = true;
 
-            using (var context = new WeatherAPIContext())
-            {
-                context.Entry(kmlStream).State = EntityState.Modified;
+            this.Context.Entry(kmlStream).State = EntityState.Modified;
 
-                try
+            try
+            {
+                await this.Context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!KMLStreamExists(kmlStream.ID))
                 {
-                    await context.SaveChangesAsync();
+                    success = false;
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!KMLStreamExists(kmlStream.ID))
-                    {
-                        success = false;
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
             }
 
             return success;
         }
 
-        public static async Task<KMLStream> GetSpecificStream(KMLDataSource source, string typeName, string name)
+        public async Task<KMLStream> GetSpecificStream(KMLDataSource source, string typeName, string name)
         {
-            KMLStream specificStream;
-
-            using (var context = new WeatherAPIContext())
-            {
-                specificStream =  await context.CompleteKMLStreams().Where(c => c.Source == source && c.KMLData.DataType.Name == typeName && c.Name == name)
+            return await this.Context.CompleteKMLStreams().Where(c => c.Source == source && c.KMLData.DataType.Name == typeName && c.Name == name)
                             .FirstOrDefaultAsync();
-            }
-
-            return specificStream;
         }
 
-        public static async void DeleteKMLStream(KMLStream kmlStream)
+        public async void DeleteKMLStream(KMLStream kmlStream)
         {
-            using (var context = new WeatherAPIContext())
-            {
-                context.KMLStreams.Remove(kmlStream);
-                await context.SaveChangesAsync();
-            }
+                this.Context.KMLStreams.Remove(kmlStream);
+                await this.Context.SaveChangesAsync();
         }
 
-        public static bool KMLStreamExists(int id)
+        public bool KMLStreamExists(int id)
         {
-            bool exists;
-
-            using (var context = new WeatherAPIContext())
-            {
-                exists = context.KMLStreams.Count(e => e.ID == id) > 0;
-            }
-
-            return exists;
-
+            return this.Context.KMLStreams.Count(e => e.ID == id) > 0;
         }
 
     }

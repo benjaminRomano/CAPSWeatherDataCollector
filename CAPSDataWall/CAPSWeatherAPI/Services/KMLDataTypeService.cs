@@ -13,114 +13,72 @@ using WeatherAPIModels.Models;
 
 namespace CAPSWeatherAPI.Services
 {
-    public static class KMLDataTypeService
+    public class KMLDataTypeService
     {
-        public static async Task<KMLDataType> AddKMLDataType(KMLDataType kmlDataType)
+        private WeatherDataContext Context { get; set; }
+
+        public KMLDataTypeService(WeatherDataContext context)
         {
-            KMLDataType newKMLDataType;
-
-            using (var context = new WeatherAPIContext())
-            {
-                if (FileTypeService.FileTypeExists(kmlDataType.FileType.Name))
-                {
-                    var foundFileType = await FileTypeService.FindFileType(kmlDataType.FileType.Name);
-                    kmlDataType.FileTypeID = foundFileType.ID;
-                    kmlDataType.FileType = null;
-                }
-
-                context.KMLDataTypes.Add(kmlDataType);
-                await context.SaveChangesAsync();
-                newKMLDataType = await context.CompleteKMLDataTypes().FirstOrDefaultAsync(k => k.ID == kmlDataType.ID);
-            }
-
-            return newKMLDataType;
+            this.Context = context;
         }
 
-        public static IQueryable<KMLDataType> GetAllKMLDataTypes()
+        public async Task<KMLDataType> AddKMLDataType(KMLDataType kmlDataType)
         {
-            IQueryable<KMLDataType> allKMLDataTypes;
-
-            using (var context = new WeatherAPIContext())
-            {
-                allKMLDataTypes = context.CompleteKMLDataTypes();
-            }
-
-            return allKMLDataTypes;
+            this.Context.KMLDataTypes.Add(kmlDataType);
+            await this.Context.SaveChangesAsync();
+            return await this.Context.CompleteKMLDataTypes().FirstOrDefaultAsync(k => k.ID == kmlDataType.ID);
         }
 
-        public static async Task<KMLDataType> GetKMLDataType(int id)
+        public IQueryable<KMLDataType> GetAllKMLDataTypes()
         {
-            KMLDataType kmlDataType;
-
-            using (var context = new WeatherAPIContext())
-            {
-                kmlDataType = await context.CompleteKMLDataTypes().FirstOrDefaultAsync(k => k.ID == id);
-            }
-
-            return kmlDataType;
-
+             return this.Context.CompleteKMLDataTypes();
         }
 
-        public static async Task<bool> UpdateKMLDataType(KMLDataType kmlDataType)
+        public async Task<KMLDataType> GetKMLDataType(int id)
+        {
+            return await this.Context.CompleteKMLDataTypes().FirstOrDefaultAsync(k => k.ID == id);
+        }
+
+        public async Task<bool> UpdateKMLDataType(KMLDataType kmlDataType)
         {
             var success = true;
 
-            using (var context = new WeatherAPIContext())
-            {
-                context.Entry(kmlDataType).State = EntityState.Modified;
+            this.Context.Entry(kmlDataType).State = EntityState.Modified;
 
-                try
+            try
+            {
+                await this.Context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!KMLDataTypeExists(kmlDataType.Name))
                 {
-                    await context.SaveChangesAsync();
+                    success = false;
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!KMLDataTypeExists(kmlDataType.Name))
-                    {
-                        success = false;
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
             }
 
             return success;
         }
 
-        public static async void DeleteKMLDataType(KMLDataType kmlDataType)
+        public async void DeleteKMLDataType(KMLDataType kmlDataType)
         {
-            using (var context = new WeatherAPIContext())
-            {
-                context.KMLDataTypes.Remove(kmlDataType);
-                await context.SaveChangesAsync();
-            }
+            this.Context.KMLDataTypes.Remove(kmlDataType);
+            await this.Context.SaveChangesAsync();
         }
 
 
-        public static async Task<KMLDataType> FindKMLDataType(string name)
+        public async Task<KMLDataType> FindKMLDataType(string name)
         {
-            KMLDataType kmlDataType;
-
-            using (var context = new WeatherAPIContext())
-            {
-                kmlDataType = await context.CompleteKMLDataTypes().Where(e => e.Name == name).FirstOrDefaultAsync();
-            }
-
-            return kmlDataType;
+            return await this.Context.CompleteKMLDataTypes().Where(e => e.Name == name).FirstOrDefaultAsync();
         }
 
-        public static bool KMLDataTypeExists(string name)
+        public bool KMLDataTypeExists(string name)
         {
-            bool exists;
-
-            using (var context = new WeatherAPIContext())
-            {
-                exists = context.KMLDataTypes.Count(e => e.Name == name) > 0;
-            }
-
-            return exists;
+            return this.Context.KMLDataTypes.Count(e => e.Name == name) > 0;
         }
     }
 }

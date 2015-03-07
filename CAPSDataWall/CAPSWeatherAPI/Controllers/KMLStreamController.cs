@@ -20,22 +20,23 @@ namespace CAPSWeatherAPI.Controllers
 {
     public class KMLStreamController : ApiController
     {
+        private WeatherAPIContext Context = new WeatherAPIContext();
 
         // GET: api/KMLStream
         [Route("api/KMLStream")]
         [HttpGet]
         public IQueryable<KMLStream> GetKMLStreams()
         {
-            return KMLStreamService.GetAllKMLStreams();
+            return this.Context.KMLStreamService.GetAllKMLStreams();
         }
 
-        //GET "api/KMLStream"
+        //GET: api/KMLStream
         [ResponseType(typeof(KMLStream))]
         [Route("api/KMLStream")]
         [HttpGet]
         public async Task<IHttpActionResult> GetKMLStream(int id)
         {
-            var kmlStream = await KMLStreamService.GetKMLStream(id);
+            var kmlStream = await this.Context.KMLStreamService.GetKMLStream(id);
 
             if (kmlStream == null)
             {
@@ -45,13 +46,13 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(kmlStream);
         }
 
-        //GET "api/KMLStream"
+        //GET: api/KMLStream
         [Route("api/KMLStream")]
         [HttpGet]
         [ResponseType(typeof(KMLStream))]
         public async Task<IHttpActionResult> GetKMLStream(KMLDataSource source, string typeName, string name)
         {
-            var kmlStream = await KMLStreamService.GetSpecificStream(source,typeName,name);
+            var kmlStream = await this.Context.KMLStreamService.GetSpecificStream(source,typeName,name);
 
             if (kmlStream == null)
             {
@@ -68,14 +69,14 @@ namespace CAPSWeatherAPI.Controllers
         [HttpPut]
         public async Task<IHttpActionResult> IncrementKMLStream(KMLDataSource source, string typeName,string name)
         {
-            var currentStream = await KMLStreamService.GetSpecificStream(source, typeName, name);
+            var currentStream = await this.Context.KMLStreamService.GetSpecificStream(source, typeName, name);
 
             KMLData kmlData;
             //no record exists. Create record and set it to latest Data
             if (currentStream == null)
             {
 
-                kmlData = await KMLDataService.GetLatest(typeName);
+                kmlData = await this.Context.KMLDataService.GetLatest(typeName);
 
                 //No data exists
                 if (kmlData == null)
@@ -92,15 +93,14 @@ namespace CAPSWeatherAPI.Controllers
 
                 };
 
-                newKMLStream = await KMLStreamService.AddKMLStream(newKMLStream);
+                newKMLStream = await this.Context.KMLStreamService.AddKMLStream(newKMLStream);
                 return Ok(newKMLStream);
-
             }
 
             //Get next record
-            kmlData = await KMLDataService.GetNextRecord(currentStream.KMLData);
+            kmlData = await this.Context.KMLDataService.GetNextRecord(currentStream.KMLData);
 
-            //No new data return current
+            //No new data return current record
             if(kmlData == null)
             {
                 return Ok(currentStream);
@@ -110,13 +110,12 @@ namespace CAPSWeatherAPI.Controllers
             currentStream.KMLData = kmlData;
             currentStream.Updated = true;
 
-            var success =  await KMLStreamService.UpdateKMLStream(currentStream);
+            var success =  await this.Context.KMLStreamService.UpdateKMLStream(currentStream);
 
             if (!success)
             {
                 NotFound();
             }
-
 
             return Ok(currentStream);
         }
@@ -126,13 +125,14 @@ namespace CAPSWeatherAPI.Controllers
         [HttpPut]
         public async Task<IHttpActionResult> UpdateKMLStream(KMLDataSource source, KMLData kmlData, string name)
         {
-            var exists = KMLDataService.KMLDataExists(kmlData.ID);
+            var exists = this.Context.KMLDataService.KMLDataExists(kmlData.ID);
+
             if (!exists)
             {
                 return BadRequest("KML Data not found");
             }
 
-            var currentStream = await KMLStreamService.GetSpecificStream(source,kmlData.DataType.Name,name);
+            var currentStream = await this.Context.KMLStreamService.GetSpecificStream(source,kmlData.DataType.Name,name);
 
             //no data currently there create record
             if (currentStream == null)
@@ -146,7 +146,7 @@ namespace CAPSWeatherAPI.Controllers
 
                 };
 
-                newKMLStream = await KMLStreamService.AddKMLStream(newKMLStream);
+                newKMLStream = await this.Context.KMLStreamService.AddKMLStream(newKMLStream);
 
                 return Ok(newKMLStream);
             }
@@ -155,7 +155,7 @@ namespace CAPSWeatherAPI.Controllers
             currentStream.KMLData = kmlData;
             currentStream.Updated = true;
 
-            var success = await KMLStreamService.UpdateKMLStream(currentStream);
+            var success = await this.Context.KMLStreamService.UpdateKMLStream(currentStream);
 
             if (!success)
             {
@@ -170,13 +170,14 @@ namespace CAPSWeatherAPI.Controllers
         [HttpPut]
         public async Task<IHttpActionResult> UpdateKMLStream(KMLDataSource source,string name,int kmlDataId)
         {
-            var kmlData = await KMLDataService.GetKMLData(kmlDataId);
+            var kmlData = await this.Context.KMLDataService.GetKMLData(kmlDataId);
+
             if (kmlData == null)
             {
                 return BadRequest("KML Data not found");
             }
 
-            var currentStream = await KMLStreamService.GetSpecificStream(source, kmlData.DataType.Name, name);
+            var currentStream = await this.Context.KMLStreamService.GetSpecificStream(source, kmlData.DataType.Name, name);
 
             //no data currently there. Create record
             if (currentStream == null)
@@ -189,7 +190,7 @@ namespace CAPSWeatherAPI.Controllers
                     KMLDataID = kmlData.ID
                 };
 
-                newKMLStream = await KMLStreamService.AddKMLStream(newKMLStream);
+                newKMLStream = await this.Context.KMLStreamService.AddKMLStream(newKMLStream);
 
                 return Ok(newKMLStream);
             }
@@ -199,7 +200,7 @@ namespace CAPSWeatherAPI.Controllers
             currentStream.KMLDataID = kmlData.ID;
             currentStream.Updated = true;
 
-            var success = await KMLStreamService.UpdateKMLStream(currentStream);
+            var success = await this.Context.KMLStreamService.UpdateKMLStream(currentStream);
 
             if (!success)
             {
@@ -225,7 +226,7 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest();
             }
 
-            var success = await KMLStreamService.UpdateKMLStream(kmlStream);
+            var success = await this.Context.KMLStreamService.UpdateKMLStream(kmlStream);
 
             if (!success)
             {
@@ -247,7 +248,7 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var specificStream = await KMLStreamService.GetSpecificStream(kmlStream.Source, kmlStream.KMLData.DataType.Name, kmlStream.Name);
+            var specificStream = await this.Context.KMLStreamService.GetSpecificStream(kmlStream.Source, kmlStream.KMLData.DataType.Name, kmlStream.Name);
 
             if (specificStream == null) 
             {
@@ -256,7 +257,7 @@ namespace CAPSWeatherAPI.Controllers
 
             kmlStream.Updated = true;
 
-            kmlStream = await KMLStreamService.AddKMLStream(kmlStream);
+            kmlStream = await this.Context.KMLStreamService.AddKMLStream(kmlStream);
 
             return CreatedAtRoute("DefaultApi", new { id = kmlStream.ID }, kmlStream);
         }
@@ -267,14 +268,14 @@ namespace CAPSWeatherAPI.Controllers
         [HttpDelete]
         public async Task<IHttpActionResult> DeleteKMLStream(int id)
         {
-            var kmlStream = await KMLStreamService.GetKMLStream(id);
+            var kmlStream = await this.Context.KMLStreamService.GetKMLStream(id);
 
             if (kmlStream == null)
             {
                 return NotFound();
             }
 
-            KMLStreamService.DeleteKMLStream(kmlStream);
+            this.Context.KMLStreamService.DeleteKMLStream(kmlStream);
 
             return Ok(kmlStream);
         }

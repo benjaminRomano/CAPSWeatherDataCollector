@@ -20,6 +20,8 @@ namespace CAPSWeatherAPI.Controllers
     public class KMLDataController : ApiController
     {
 
+        private WeatherAPIContext Context = new WeatherAPIContext();
+
         //Expects date in date.toUTCString() format
         //returns kmlData at time 
         [Route("api/KMLData/")]
@@ -29,7 +31,7 @@ namespace CAPSWeatherAPI.Controllers
 
             var targetDate = DateTime.Parse(dateString);
 
-            var kmlData = await KMLDataService.GetDataAtTime(targetDate, typeName);
+            var kmlData = await this.Context.KMLDataService.GetDataAtTime(targetDate, typeName);
 
             if (kmlData == null)
             {
@@ -42,7 +44,7 @@ namespace CAPSWeatherAPI.Controllers
         // GET: api/KMLData
         public IQueryable<KMLData> GetKMLData()
         {
-            return KMLDataService.GetAllKMLData();
+            return this.Context.KMLDataService.GetAllKMLData();
         }
 
         // GET: api/KMLData/5
@@ -51,7 +53,8 @@ namespace CAPSWeatherAPI.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> GetKMLData(int id)
         {
-            KMLData kmlData = await KMLDataService.GetKMLData(id);
+            var kmlData = await this.Context.KMLDataService.GetKMLData(id);
+
             if (kmlData == null)
             {
                 return NotFound();
@@ -76,7 +79,7 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest();
             }
 
-            var success = await KMLDataService.UpdateKMLData(kmlData);
+            var success = await this.Context.KMLDataService.UpdateKMLData(kmlData);
 
             if (!success)
             {
@@ -96,7 +99,14 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            kmlData = await KMLDataService.AddKMLData(kmlData);
+            if (this.Context.KMLDataTypeService.KMLDataTypeExists(kmlData.DataType.Name))
+            {
+                var foundDataType = await this.Context.KMLDataTypeService.FindKMLDataType(kmlData.DataType.Name);
+                kmlData.DataTypeID = foundDataType.ID;
+                kmlData.DataType = null;
+            }
+
+            kmlData = await this.Context.KMLDataService.AddKMLData(kmlData);
 
             return Ok(kmlData);
         }
@@ -107,13 +117,14 @@ namespace CAPSWeatherAPI.Controllers
         [HttpDelete]
         public async Task<IHttpActionResult> DeleteKMLData(int id)
         {
-            KMLData kmlData = await KMLDataService.GetKMLData(id);
+            var kmlData = await this.Context.KMLDataService.GetKMLData(id);
+
             if (kmlData == null)
             {
                 return NotFound();
             }
 
-            KMLDataService.DeleteKMLData(kmlData); 
+            this.Context.KMLDataService.DeleteKMLData(kmlData); 
 
             return Ok(kmlData);
         }

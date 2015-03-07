@@ -51,10 +51,10 @@ namespace WeatherDataCollector
             IKMLUseableStorageProvider kmlUseableStorageProvider = new ImgurStorageProvider(ImgurConstants.ClientId);
 
             //Start Collectors
-            ICollector radarCollector = new BaseCollector(storageProvider, serverRadarRoot,TimeSpan.FromMinutes(1), time => time.Minute % 1 == 0, NOAARequests.RadarDataRequest );
+            ICollector radarCollector = new BaseCollector(storageProvider, serverRadarRoot,TimeSpan.FromMinutes(1), time => time.Minute % 10 == 0, NOAARequests.RadarDataRequest );
             radarCollector.StartCollector();
 
-            ICollector temperatureCollector = new BaseCollector(storageProvider, serverTemperatureRoot, TimeSpan.FromMinutes(1), time => time.Minute%1 == 0, NOAARequests.GetTemperatureData);
+            ICollector temperatureCollector = new BaseCollector(storageProvider, serverTemperatureRoot, TimeSpan.FromMinutes(1), time => time.Minute% 10 == 0, NOAARequests.GetTemperatureData);
             temperatureCollector.StartCollector();
 
             //Start Streams
