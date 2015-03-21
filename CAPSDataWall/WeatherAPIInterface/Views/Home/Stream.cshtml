@@ -1,0 +1,26 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Update Streams";
+    ViewBag.Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts{
+    @Scripts.Render("~/Scripts/jquery-1.10.2.js");
+    <script type="text/javascript" src="@Url.Content("/Scripts/stream/streamPage.js")"></script>
+}
+
+
+<h2>@ViewBag.Title</h2>
+<h6>Stream Name</h6>
+<select id="streamNameDropdown">
+    <option value="volvo">Volvo</option>
+</select>
+
+<h6>Source</h6>
+<select id="sourceDropdown">
+</select>
+
+<h6>Data Type</h6>
+<select id="dataTypeDropdown">
+</select>

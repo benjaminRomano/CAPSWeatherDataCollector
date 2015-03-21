@@ -104,7 +104,6 @@
     <Compile Include="Streams\LatestStream.cs" />
     <Compile Include="Requests\NOAARequests.cs" />
     <Compile Include="Requests\RequestHelper.cs" />
-    <Compile Include="Requests\WeatherDataAPIClient.cs" />
     <Compile Include="Responses\ImgurResponses.cs" />
     <Compile Include="StorageProvider\GoogleDriveStorageProvider.cs" />
     <Compile Include="StorageProvider\ImgurStorageProvider.cs" />
@@ -122,6 +121,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WeatherAPIInterface\WeatherAPIInterface.csproj">
+      <Project>{C6E63783-9C2B-4AA1-989E-A74348FE5DDB}</Project>
+      <Name>WeatherAPIInterface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WeatherAPIModels\WeatherAPIModels.csproj">
       <Project>{d8ade33e-53ce-4ff7-b84f-69fe0317305a}</Project>
       <Name>WeatherAPIModels</Name>

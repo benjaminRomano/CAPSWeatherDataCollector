@@ -5,6 +5,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Http;
 using CAPSWeatherAPI.Contexts;
 using CAPSWeatherAPI.Extensions;
 using WeatherAPIModels;
@@ -80,5 +81,9 @@ namespace CAPSWeatherAPI.Services
             return this.Context.KMLStreams.Count(e => e.ID == id) > 0;
         }
 
+        public IQueryable<String> GetStreamNames()
+        {
+            return this.Context.KMLStreams.Select(n => n.Name).Distinct();
+        }
     }
 }

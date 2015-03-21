@@ -2,13 +2,11 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using WeatherAPIModels;
 using WeatherAPIModels.Constants;
 using WeatherAPIModels.Models;
 using WeatherAPIModels.StreamDescriptions;
-using WeatherDataCollector.Constants;
 
-namespace WeatherDataCollector.Requests
+namespace WeatherAPIModels.Clients
 {
     public class WeatherDataAPIClient : IDisposable
     {
@@ -18,7 +16,7 @@ namespace WeatherDataCollector.Requests
         {
             Client = new HttpClient {BaseAddress = new Uri(WeatherAPIConstants.Root) };
             Client.DefaultRequestHeaders.Accept.Clear();
-            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(WeatherDataConstants.JsonContent));
+            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
         }
 
         public Task<HttpResponseMessage> AddKMLData(KMLData kmlData)
@@ -67,5 +65,6 @@ namespace WeatherDataCollector.Requests
         {
             this.Client.Dispose();
         }
+
     }
 }

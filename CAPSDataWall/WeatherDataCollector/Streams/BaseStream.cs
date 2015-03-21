@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using WeatherAPIModels.Clients;
 using WeatherAPIModels.KMLFormatters;
 using WeatherAPIModels.Models;
 using WeatherAPIModels.StreamDescriptions;

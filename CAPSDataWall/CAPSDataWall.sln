@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CAPSWeatherAPI", "CAPSWeath
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherAPIModels", "WeatherAPIModels\WeatherAPIModels.csproj", "{D8ADE33E-53CE-4FF7-B84F-69FE0317305A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherAPIInterface", "WeatherAPIInterface\WeatherAPIInterface.csproj", "{C6E63783-9C2B-4AA1-989E-A74348FE5DDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D8ADE33E-53CE-4FF7-B84F-69FE0317305A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8ADE33E-53CE-4FF7-B84F-69FE0317305A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8ADE33E-53CE-4FF7-B84F-69FE0317305A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6E63783-9C2B-4AA1-989E-A74348FE5DDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6E63783-9C2B-4AA1-989E-A74348FE5DDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6E63783-9C2B-4AA1-989E-A74348FE5DDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6E63783-9C2B-4AA1-989E-A74348FE5DDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

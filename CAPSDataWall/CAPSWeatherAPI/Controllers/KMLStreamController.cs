@@ -30,7 +30,14 @@ namespace CAPSWeatherAPI.Controllers
             return this.Context.KMLStreamService.GetAllKMLStreams();
         }
 
-        //GET: api/KMLStream
+        [Route("api/KMLStream/Names")]
+        [HttpGet]
+        public IQueryable<String> GetStreamNames()
+        {
+            return this.Context.KMLStreamService.GetStreamNames();
+        }
+
+            //GET: api/KMLStream
         [ResponseType(typeof(KMLStream))]
         [Route("api/KMLStream")]
         [HttpGet]

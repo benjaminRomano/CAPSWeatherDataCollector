@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using WeatherAPIModels.Clients;
 using WeatherAPIModels.Models;
 using WeatherAPIModels.StreamDescriptions;
 using WeatherDataCollector.Requests;

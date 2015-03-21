@@ -24,8 +24,6 @@ namespace WeatherDataCollector
     {
         static void Main(string[] args)
         {
-            //TODO: De-abstract Context from Controller
-            //TODO: Improve IStream Code
 
             //Initialize KMLDataTypes
             var radarKMLDataType = new RadarKMLDataType();
