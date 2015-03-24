@@ -20,6 +20,11 @@ namespace CAPSWeatherAPI.Controllers
 {
     public class KMLStreamController : ApiController
     {
+        public IHttpActionResult Options()
+        {
+            return Ok();
+        }
+
         private WeatherAPIContext Context = new WeatherAPIContext();
 
         // GET: api/KMLStream
@@ -32,12 +37,36 @@ namespace CAPSWeatherAPI.Controllers
 
         [Route("api/KMLStream/Names")]
         [HttpGet]
-        public IQueryable<String> GetStreamNames()
+        public IEnumerable<String> GetStreamNames()
         {
             return this.Context.KMLStreamService.GetStreamNames();
         }
 
-            //GET: api/KMLStream
+        [Route("api/KMLStream/Sources")]
+        [HttpGet]
+        public  IEnumerable<string> GetSources(string name)
+        {
+            var sources = this.Context.KMLStreamService.GetSources(name);
+            return sources.Select(s => Enum.GetName(typeof (KMLDataSource), s)).Distinct();
+        }
+
+        [Route("api/KMLStream/DataTypes")]
+        [HttpGet]
+        public IEnumerable<String> GetDataTypes(string name, string source)
+        {
+
+            KMLDataSource kmlDataSource;
+            var success = Enum.TryParse(source, true, out kmlDataSource);
+
+            if (!success)
+            {
+                return Enumerable.Empty<String>();
+            }
+
+            return this.Context.KMLStreamService.GetDataTypes(name, kmlDataSource);
+        }
+
+        //GET: api/KMLStream
         [ResponseType(typeof(KMLStream))]
         [Route("api/KMLStream")]
         [HttpGet]
@@ -74,7 +103,7 @@ namespace CAPSWeatherAPI.Controllers
         // PUT: api/KMLStream/increment
         [Route("api/KMLStream/increment")]
         [HttpPut]
-        public async Task<IHttpActionResult> IncrementKMLStream(KMLDataSource source, string typeName,string name)
+        public async Task<IHttpActionResult> IncrementKMLStream(KMLDataSource source, string typeName,string name, bool setUpdated)
         {
             var currentStream = await this.Context.KMLStreamService.GetSpecificStream(source, typeName, name);
 
@@ -96,7 +125,7 @@ namespace CAPSWeatherAPI.Controllers
                     Source = source,
                     KMLDataID = kmlData.ID,
                     Name = name,
-                    Updated = true
+                    Updated = setUpdated
 
                 };
 
@@ -115,7 +144,6 @@ namespace CAPSWeatherAPI.Controllers
 
             currentStream.KMLDataID = kmlData.ID;
             currentStream.KMLData = kmlData;
-            currentStream.Updated = true;
 
             var success =  await this.Context.KMLStreamService.UpdateKMLStream(currentStream);
 
@@ -128,9 +156,9 @@ namespace CAPSWeatherAPI.Controllers
         }
 
         // PUT: api/KMLStream/update
-        [Route("api/KMLStream/update")]
         [HttpPut]
-        public async Task<IHttpActionResult> UpdateKMLStream(KMLDataSource source, KMLData kmlData, string name)
+        [Route("api/KMLStream/update")]
+        public async Task<IHttpActionResult> UpdateKMLStream(KMLDataSource source, KMLData kmlData, string name, bool setUpdated)
         {
             var exists = this.Context.KMLDataService.KMLDataExists(kmlData.ID);
 
@@ -149,7 +177,7 @@ namespace CAPSWeatherAPI.Controllers
                     Source = source,
                     KMLDataID = kmlData.ID,
                     Name = name,
-                    Updated = true
+                    Updated = setUpdated
 
                 };
 
@@ -160,7 +188,10 @@ namespace CAPSWeatherAPI.Controllers
 
             //Record found update it
             currentStream.KMLData = kmlData;
-            currentStream.Updated = true;
+            if (setUpdated)
+            {
+                currentStream.Updated = true;
+            }
 
             var success = await this.Context.KMLStreamService.UpdateKMLStream(currentStream);
 
@@ -175,7 +206,7 @@ namespace CAPSWeatherAPI.Controllers
         // PUT: api/KMLStream/update
         [Route("api/KMLStream/update")]
         [HttpPut]
-        public async Task<IHttpActionResult> UpdateKMLStream(KMLDataSource source,string name,int kmlDataId)
+        public async Task<IHttpActionResult> UpdateKMLStream(KMLDataSource source,string name,int kmlDataId,bool setUpdated)
         {
             var kmlData = await this.Context.KMLDataService.GetKMLData(kmlDataId);
 
@@ -193,7 +224,7 @@ namespace CAPSWeatherAPI.Controllers
                 {
                     Source = source,
                     Name = name,
-                    Updated = true,
+                    Updated = setUpdated,
                     KMLDataID = kmlData.ID
                 };
 
@@ -205,7 +236,10 @@ namespace CAPSWeatherAPI.Controllers
             //Record found update it
             currentStream.KMLData = kmlData;
             currentStream.KMLDataID = kmlData.ID;
-            currentStream.Updated = true;
+            if (setUpdated)
+            {
+                currentStream.Updated = true;
+            }
 
             var success = await this.Context.KMLStreamService.UpdateKMLStream(currentStream);
 

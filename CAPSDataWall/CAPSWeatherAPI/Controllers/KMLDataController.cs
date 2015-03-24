@@ -41,6 +41,13 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(kmlData);
         }
 
+        [Route("api/KMLData")]
+        [HttpGet]
+        public IQueryable<KMLData> GetKMLData(string typeName)
+        {
+            return this.Context.KMLDataService.GetAllKMLData(typeName);
+        }
+
         // GET: api/KMLData
         public IQueryable<KMLData> GetKMLData()
         {

@@ -98,16 +98,16 @@ namespace WeatherDataCollector.Streams
             else
             {
                 var success = RequestHelper.DownloadFile(stream.KMLData.UseableUrl, this.FilePath);
+
                 if (!success)
                 {
-                    Console.WriteLine("Could not download file for stream");
+                    Console.WriteLine("Could not download file for {0} stream", this.OutputStreamDescription);
                     return false;
                 }
-                else
-                {
-                    Console.WriteLine("Stream updated!");
-                }
+
             }
+
+            Console.WriteLine("{0} stream updated!",this.OutputStreamDescription);
 
             return true;
         }

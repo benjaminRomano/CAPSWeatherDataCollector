@@ -85,5 +85,20 @@ namespace CAPSWeatherAPI.Services
         {
             return this.Context.KMLStreams.Select(n => n.Name).Distinct();
         }
+
+        public IList<KMLDataSource> GetSources(string name)
+        {
+            return this.Context.KMLStreams.Where(s => s.Name == name)
+                    .Select(s => s.Source)
+                    .Distinct()
+                    .ToList();
+        }
+
+        public IQueryable<string> GetDataTypes(string name, KMLDataSource source)
+        {
+            return this.Context.KMLStreams.Where(s => s.Source == source && s.Name == name)
+                    .Select(n => n.KMLData.DataType.Name).Distinct();
+        }
+
     }
 }

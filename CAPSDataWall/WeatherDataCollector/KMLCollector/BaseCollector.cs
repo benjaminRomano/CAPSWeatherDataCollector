@@ -37,6 +37,7 @@ namespace WeatherDataCollector.KMLCollector
             this.Client = new WeatherDataAPIClient();
             this.Collector = null;
         }
+
         public virtual void StartCollector()
         {
             //Timer already started
@@ -100,18 +101,18 @@ namespace WeatherDataCollector.KMLCollector
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Could not update {0} kml stream!", this.StreamDescription.KMLDataType.Name);
+                    Console.WriteLine("Could not add {0} data!", this.StreamDescription.KMLDataType.Name);
                     return;
                 }
 
                 Console.WriteLine("{0} data uploaded to API!", this.StreamDescription.KMLDataType.Name);
                 kmlData = await response.Content.ReadAsAsync<KMLData>();
 
-                response  = await Client.UpdateKMLStream(this.StreamDescription,kmlData.ID);
+                response  = await Client.UpdateKMLStream(this.StreamDescription,kmlData.ID, true);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Could not update {0} kml stream", this.StreamDescription.KMLDataType.Name);
+                    Console.WriteLine("Could not update {0} stream", this.StreamDescription);
                 }
 
             }, null, TimeSpan.Zero,this.CheckFrequency);

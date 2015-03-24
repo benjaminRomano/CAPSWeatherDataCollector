@@ -28,7 +28,7 @@ namespace WeatherDataCollector.Streams
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Could not load stream data");
+                    Console.WriteLine("Could not load data for {0} latest input stream", this.InputStreamDescription);
                     return;
                 }
 
@@ -37,12 +37,12 @@ namespace WeatherDataCollector.Streams
 
                 //Update output KML Stream with input KML Data
                 response = await this.Client.UpdateKMLStream(this.OutputStreamDescription, 
-                    inputKMLStream.KMLData.ID);
+                    inputKMLStream.KMLData.ID,true);
 
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Could not update latest output stream");
+                    Console.WriteLine("Could not update {0} latest output stream", this.OutputStreamDescription);
                     return;
                 }
 
@@ -53,7 +53,7 @@ namespace WeatherDataCollector.Streams
 
                 if (!result)
                 {
-                    Console.WriteLine("Could not write to local latest stream file!");
+                    Console.WriteLine("Could not write to latest stream file!");
                 }
 
             }, null, TimeSpan.Zero, this.UpdateFrequency);

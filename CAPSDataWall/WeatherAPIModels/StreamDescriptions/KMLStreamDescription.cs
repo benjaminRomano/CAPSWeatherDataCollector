@@ -1,4 +1,5 @@
-﻿using WeatherAPIModels.Models;
+﻿using System;
+using WeatherAPIModels.Models;
 using WeatherAPIModels.StreamNames;
 
 namespace WeatherAPIModels.StreamDescriptions
@@ -14,6 +15,15 @@ namespace WeatherAPIModels.StreamDescriptions
             this.Source = source;
             this.KMLDataType = kmlDataType;
             this.StreamName = streamName;
+        }
+
+        /// <summary>
+        /// Prints out Stream Name,Source and DataType Name
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return StreamName + " " + Enum.GetName(typeof (KMLDataSource), Source) + " " + KMLDataType.Name;
         }
     }
 }

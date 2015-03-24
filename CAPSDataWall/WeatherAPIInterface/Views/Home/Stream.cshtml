@@ -6,21 +6,33 @@
 }
 
 @section Scripts{
+    @Styles.Render("~/Content/Stream/streamPage.css");
     @Scripts.Render("~/Scripts/jquery-1.10.2.js");
-    <script type="text/javascript" src="@Url.Content("/Scripts/stream/streamPage.js")"></script>
+    @Scripts.Render("~/Scripts/stream/streamPage.js")
 }
 
+<div class="container">
+    <div class="col-md-6">
+        <h3>Find Stream</h3>
+        <span>Stream Name:</span>
+        <select id="streamNameDropdown"></select>
+        <br />
+        <span>Source:</span>
+        <select id="sourceDropdown"></select>
+        <br />
 
-<h2>@ViewBag.Title</h2>
-<h6>Stream Name</h6>
-<select id="streamNameDropdown">
-    <option value="volvo">Volvo</option>
-</select>
+        <span>Data Type:</span>
+        <select id="dataTypeDropdown"></select>
+        <br />
+        <h4>Current Stream Data</h4>
+        <span>Created At:</span>
+        <span id="dataCreatedAt"></span>
 
-<h6>Source</h6>
-<select id="sourceDropdown">
-</select>
-
-<h6>Data Type</h6>
-<select id="dataTypeDropdown">
-</select>
+    </div>
+    <div class="col-md-6 ">
+        <h3>Update Stream</h3>
+        <span>Set Time:</span>
+        <select id="timeDropdown"></select>
+        <input id="updateStreamButton" type="submit" value="Update"/>
+    </div>
+</div>

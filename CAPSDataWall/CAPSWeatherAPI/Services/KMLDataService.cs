@@ -108,5 +108,10 @@ namespace CAPSWeatherAPI.Services
         {
             return this.Context.KMLData.Count(e => e.ID == id) > 0;
         }
+
+        public IQueryable<KMLData> GetAllKMLData(string typeName)
+        {
+            return this.Context.KMLData.Where(k => k.DataType.Name == typeName);
+        }
     }
 }

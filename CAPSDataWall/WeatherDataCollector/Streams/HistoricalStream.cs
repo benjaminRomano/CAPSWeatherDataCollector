@@ -12,10 +12,12 @@ namespace WeatherDataCollector.Streams
 {
     class HistoricalStream : BaseStream
     {
+        private TimeSpan MinutesSinceLastCheck { get; set; }
+
         public HistoricalStream(IKMLUseableStorageProvider storageProvider,KMLStreamDescription inputStreamDescription, KMLStreamDescription outputStreamDescription, string filePath, TimeSpan updateFrequency) :
             base(storageProvider,inputStreamDescription,outputStreamDescription,filePath,updateFrequency)
         {
-
+            this.MinutesSinceLastCheck = new TimeSpan();
         }
 
         public override void StartStream()
@@ -24,6 +26,9 @@ namespace WeatherDataCollector.Streams
             {
                 //Check if input status stream data was updated
                 var response = await Client.GetKMLStream(this.InputStreamDescription);
+
+                //Update Time since last check
+                this.MinutesSinceLastCheck = this.MinutesSinceLastCheck.Add(TimeSpan.FromSeconds(30));
 
 
                 KMLStream inputKMLStream = null;
@@ -41,13 +46,21 @@ namespace WeatherDataCollector.Streams
 
                 KMLStream outputKMLStream;
 
+
+                if ((inputKMLStream == null && this.MinutesSinceLastCheck < this.UpdateFrequency) ||
+                    (inputKMLStream != null && !inputKMLStream.Updated &&
+                     this.MinutesSinceLastCheck < this.UpdateFrequency))
+                {
+                    return;
+                }
+
                 if (inputKMLStream != null && inputKMLStream.Updated)
                 {
                     inputKMLStream.Updated = false;
                     await this.Client.UpdateKMLStream(inputKMLStream);
 
                     //Update data from inputStreamDescription
-                    response = await Client.UpdateKMLStream(this.OutputStreamDescription, inputKMLStream.KMLData.ID);
+                    response = await Client.UpdateKMLStream(this.OutputStreamDescription, inputKMLStream.KMLData.ID,false);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -59,7 +72,9 @@ namespace WeatherDataCollector.Streams
                 }
                 else
                 {
-                    response = await Client.IncrementKMLStream(this.OutputStreamDescription);
+                    this.MinutesSinceLastCheck = TimeSpan.FromMinutes(0);
+
+                    response = await Client.IncrementKMLStream(this.OutputStreamDescription, false);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -78,8 +93,7 @@ namespace WeatherDataCollector.Streams
                     Console.WriteLine("Could not write to local history stream file!");
                 }
 
-            }, null, TimeSpan.Zero, this.UpdateFrequency);
-
+            }, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
         }
     }
 }

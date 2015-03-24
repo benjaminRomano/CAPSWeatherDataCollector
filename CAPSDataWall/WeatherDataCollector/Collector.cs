@@ -24,6 +24,10 @@ namespace WeatherDataCollector
     {
         static void Main(string[] args)
         {
+            //TODO: Clean up front-end
+            //TODO: Create Composite Streams
+            //TODO: Add tests to verify changes
+
 
             //Initialize KMLDataTypes
             var radarKMLDataType = new RadarKMLDataType();
@@ -35,7 +39,6 @@ namespace WeatherDataCollector
             //Initialize KML Stream Descriptions
             var latestRadarRoot = new KMLStreamDescription(KMLDataSource.Latest, radarKMLDataType, rootStreamName);
             var historicalRadarRoot = new KMLStreamDescription(KMLDataSource.Historical, radarKMLDataType, rootStreamName);
-            var webRadarRoot = new KMLStreamDescription(KMLDataSource.Web, radarKMLDataType, rootStreamName);
             var serverRadarRoot = new KMLStreamDescription(KMLDataSource.Server, radarKMLDataType, rootStreamName);
 
             var serverTemperatureRoot = new KMLStreamDescription(KMLDataSource.Server, temperatureKMLDataType, rootStreamName);
@@ -52,7 +55,7 @@ namespace WeatherDataCollector
             ICollector radarCollector = new BaseCollector(storageProvider, serverRadarRoot,TimeSpan.FromMinutes(1), time => time.Minute % 10 == 0, NOAARequests.RadarDataRequest );
             radarCollector.StartCollector();
 
-            ICollector temperatureCollector = new BaseCollector(storageProvider, serverTemperatureRoot, TimeSpan.FromMinutes(1), time => time.Minute% 10 == 0, NOAARequests.GetTemperatureData);
+            ICollector temperatureCollector = new BaseCollector(storageProvider, serverTemperatureRoot, TimeSpan.FromMinutes(1), time => time.Minute % 10 == 0, NOAARequests.GetTemperatureData);
             temperatureCollector.StartCollector();
 
             //Start Streams
@@ -61,8 +64,8 @@ namespace WeatherDataCollector
 
             latestRadarStream.StartStream();
 
-            IStream historicalRadarStream = new HistoricalStream(kmlUseableStorageProvider,webRadarRoot,historicalRadarRoot,
-                WeatherDataConstants.HistoricalRadarFileName,TimeSpan.FromMinutes(10));
+            IStream historicalRadarStream = new HistoricalStream(kmlUseableStorageProvider,historicalRadarRoot,historicalRadarRoot,
+                WeatherDataConstants.HistoricalRadarFileName,TimeSpan.FromMinutes(1));
 
             historicalRadarStream.StartStream();
 

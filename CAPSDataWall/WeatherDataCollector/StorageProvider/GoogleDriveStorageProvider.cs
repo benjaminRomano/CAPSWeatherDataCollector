@@ -18,7 +18,7 @@ namespace WeatherDataCollector.StorageProvider
         public GoogleDriveStorageProvider(String clientId, String clientSecret, String applicationName)
         {
             //First initialization on new client will open browser to allow service to use client
-            UserCredential credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+            var credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                 new ClientSecrets
                 {
                     ClientId = clientId,
@@ -37,15 +37,12 @@ namespace WeatherDataCollector.StorageProvider
 
         public string Add(StorageProviderAddParams addParams)
         {
-            var body = new File();
-            body.Title = addParams.ServerFileName;
-            body.MimeType = addParams.ContentType;
-
+            var body = new File {Title = addParams.ServerFileName, MimeType = addParams.ContentType};
 
             var serverFolderId = FindFolderIdByName(addParams.ServerFolderName);
             if (String.IsNullOrEmpty(serverFolderId))
             {
-                serverFolderId = createFolder(addParams.ServerFolderName);
+                serverFolderId = CreateFolder(addParams.ServerFolderName);
             }
 
             body.Parents = new List<ParentReference>() { new ParentReference() { Id = serverFolderId } };
@@ -54,12 +51,12 @@ namespace WeatherDataCollector.StorageProvider
             System.IO.MemoryStream stream = new System.IO.MemoryStream(byteArray);
             try
             {
-                FilesResource.InsertMediaUpload request = this.driveService.Files.Insert(body, stream, addParams.ContentType);
+                var request = this.driveService.Files.Insert(body, stream, addParams.ContentType);
                 request.Upload();
 
                 var file = request.ResponseBody;
 
-                Console.WriteLine("New File Created: {0} with ID {1} ", file.Title, file.Id);
+                Console.WriteLine("Google Drive File {0} Created ", file.Title);
 
                 return file.WebContentLink;
             }
@@ -72,9 +69,8 @@ namespace WeatherDataCollector.StorageProvider
 
         private string FindFolderIdByName(string folderName)
         {
-            IList<File> results = new List<File>();
-            FilesResource.ListRequest listRequest = this.driveService.Files.List();
-            StringBuilder queryBuilder = new StringBuilder();
+            var listRequest = this.driveService.Files.List();
+            var queryBuilder = new StringBuilder();
 
             queryBuilder.Append("title = '");
             queryBuilder.Append(folderName);
@@ -82,36 +78,35 @@ namespace WeatherDataCollector.StorageProvider
             queryBuilder.Append("and trashed = false");
 
             listRequest.Q = queryBuilder.ToString();
-            results = listRequest.Execute().Items;
+            var results = listRequest.Execute().Items;
 
-            if (results.Count() == 0)
+            if (!results.Any())
             {
                 return null;
             }
-            else
-            {
-                return results[0].Id;
-            }
+
+            return results[0].Id;
         }
 
-        private string createFolder(string folderName)
+        private string CreateFolder(string folderName)
         {
-            Permission folderPermissions = new Permission();
-            folderPermissions.Type = "anyone";
-            folderPermissions.Role = "reader";
-            folderPermissions.Value = "";
-            folderPermissions.WithLink = true;
+            var folderPermissions = new Permission
+            {
+                Type = "anyone",
+                Role = "reader",
+                Value = "",
+                WithLink = true
+            };
 
-            File folder = new File();
-            folder.Title = folderName;
-            folder.MimeType = "application/vnd.google-apps.folder";
-            
-            FilesResource.InsertRequest insertRequest = this.driveService.Files.Insert(folder);
+            var folder = new File {Title = folderName, MimeType = "application/vnd.google-apps.folder"};
+
+            var insertRequest = this.driveService.Files.Insert(folder);
             folder = insertRequest.Execute();
 
             this.driveService.Permissions.Insert(folderPermissions, folder.Id).Execute();
 
-            Console.WriteLine("New Folder Created: {0} with id {1}", folderName, folder.Id);
+            Console.WriteLine("Google Drive Folder {0} Created",folderName);
+
             return folder.Id;
         }
     }
