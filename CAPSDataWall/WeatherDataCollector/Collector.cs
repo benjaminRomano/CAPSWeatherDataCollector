@@ -32,6 +32,7 @@ namespace WeatherDataCollector
             //Initialize KMLDataTypes
             var radarKMLDataType = new RadarKMLDataType();
             var temperatureKMLDataType = new TemperatureKMLDataType();
+            var irSatelliteKMLDataType = new IRSatelliteKMLDataType();
 
             //Initialize Stream Names
             var rootStreamName = new RootStreamName();
@@ -44,6 +45,8 @@ namespace WeatherDataCollector
             var serverTemperatureRoot = new KMLStreamDescription(KMLDataSource.Server, temperatureKMLDataType, rootStreamName);
             var latestTemperatureRoot = new KMLStreamDescription(KMLDataSource.Latest, temperatureKMLDataType, rootStreamName);
             
+            var serverIRSatelliteRoot = new KMLStreamDescription(KMLDataSource.Server, irSatelliteKMLDataType, rootStreamName);
+            var latestIRSatelliteRoot = new KMLStreamDescription(KMLDataSource.Latest, irSatelliteKMLDataType, rootStreamName);
 
             //Initialize Storage Providers
             IPermanentStorageProvider storageProvider = new GoogleDriveStorageProvider(GoogleConstants.GoogleDriveAppClientId,
@@ -57,6 +60,10 @@ namespace WeatherDataCollector
 
             ICollector temperatureCollector = new BaseCollector(storageProvider, serverTemperatureRoot, TimeSpan.FromMinutes(1), time => time.Minute % 10 == 0, NOAARequests.GetTemperatureData);
             temperatureCollector.StartCollector();
+
+            ICollector irSatelliteCollector = new BaseCollector(storageProvider, serverIRSatelliteRoot, TimeSpan.FromMinutes(1), time => time.Minute % 1 == 0, NOAARequests.GetIRSatelliteData);
+            irSatelliteCollector.StartCollector();
+
 
             //Start Streams
             IStream latestRadarStream = new LatestStream(kmlUseableStorageProvider, serverRadarRoot, latestRadarRoot,
@@ -74,6 +81,11 @@ namespace WeatherDataCollector
                 WeatherDataConstants.TemperatureFileName, TimeSpan.FromMinutes(1));
 
             latestTemperatureStream.StartStream();
+
+            IStream latestIRSatelliteStream = new LatestStream(kmlUseableStorageProvider, serverIRSatelliteRoot, latestIRSatelliteRoot,
+                WeatherDataConstants.IRSatelliteFileName, TimeSpan.FromMinutes(1));
+
+            latestIRSatelliteStream.StartStream();
 
 
             Console.ReadLine();

@@ -106,11 +106,18 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest(ModelState);
             }
 
+            //Replace types with their IDs if found
             if (this.Context.KMLDataTypeService.KMLDataTypeExists(kmlData.DataType.Name))
             {
                 var foundDataType = await this.Context.KMLDataTypeService.FindKMLDataType(kmlData.DataType.Name);
                 kmlData.DataTypeID = foundDataType.ID;
                 kmlData.DataType = null;
+            }
+            else if(this.Context.FileTypeService.FileTypeExists(kmlData.DataType.FileType.Name))
+            {
+                var foundFileType = await this.Context.FileTypeService.FindFileType(kmlData.DataType.FileType.Name);
+                kmlData.DataType.FileTypeID = foundFileType.ID;
+                kmlData.DataType.FileType = null;
             }
 
             kmlData = await this.Context.KMLDataService.AddKMLData(kmlData);

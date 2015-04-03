@@ -87,7 +87,15 @@ namespace WeatherDataCollector.Streams
 
             File.Delete(tempFileName);
 
-            File.Delete(this.FilePath);
+            try
+            {
+                File.Delete(this.FilePath);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Could not delete existing file");
+                return false;
+            }
 
             if (stream.KMLData.DataType.FileType.RequiresKMLFileCreation)
             {

@@ -23,6 +23,8 @@ namespace WeatherAPIModels.ConvertServices
                     return new RadarKMLDataType(dataType);
                 case "Temperature":
                     return new TemperatureKMLDataType(dataType);
+                case "IRSatellite":
+                    return new IRSatelliteKMLDataType(dataType);
             }
 
             return new BaseKMLDataType(dataType);

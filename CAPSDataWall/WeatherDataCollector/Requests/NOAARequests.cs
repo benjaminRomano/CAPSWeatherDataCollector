@@ -17,5 +17,10 @@ namespace WeatherDataCollector.Requests
         {
             return RequestHelper.DownloadFile(WeatherDataConstants.TemperatureDataUrl, tempFileName);
         }
+
+        public static bool GetIRSatelliteData(IStorageProvider storageProvider, string tempFileName)
+        {
+            return RequestHelper.DownloadFile(WeatherDataConstants.IRSatelliteDataUrl, tempFileName);
+        }
     }
 }

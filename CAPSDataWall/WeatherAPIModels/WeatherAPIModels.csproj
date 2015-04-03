@@ -63,6 +63,7 @@
     <Compile Include="SpecificModels\KMLDataTypes\RadarKMLDataType.cs" />
     <Compile Include="Models\FileType.cs" />
     <Compile Include="SpecificModels\KMLDataTypes\SpecificKMLDataType.cs" />
+    <Compile Include="SpecificModels\KMLDataTypes\IRSatelliteKMLDataType.cs" />
     <Compile Include="SpecificModels\KMLDataTypes\TemperatureKMLDataType.cs" />
     <Compile Include="KMLFormatters\kml.cs" />
     <Compile Include="KMLFormatters\KMLFileCreator.cs" />
