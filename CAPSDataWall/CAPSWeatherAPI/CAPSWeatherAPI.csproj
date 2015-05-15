@@ -171,12 +171,14 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Contexts\WeatherDataContext.cs" />
+    <Compile Include="Handlers\GlobalExceptionHandler.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\FileTypeService.cs" />
     <Compile Include="Services\KMLDataService.cs" />
     <Compile Include="Services\KMLDataTypeService.cs" />
     <Compile Include="Services\KMLStreamService.cs" />
+    <Compile Include="Utilities\CustomErrorResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
@@ -264,7 +266,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>11785</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

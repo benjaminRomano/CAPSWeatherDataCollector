@@ -4,14 +4,12 @@ namespace WeatherAPIModels.Models
 {
     public class KMLStream 
     {
-        public int ID { get; set; }
-        public KMLDataSource Source { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
-        public bool Updated { get; set; }
 
-        public int KMLDataID { get; set; }
+        public int KMLDataId { get; set; }
 
-        [ForeignKey("KMLDataID")]
+        [ForeignKey("KMLDataId")]
         public KMLData KMLData { get; set; }
 
     }

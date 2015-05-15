@@ -49,7 +49,7 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != kmlDataType.ID)
+            if (id != kmlDataType.Id)
             {
                 return BadRequest();
             }
@@ -76,13 +76,13 @@ namespace CAPSWeatherAPI.Controllers
             if (this.Context.FileTypeService.FileTypeExists(kmlDataType.FileType.Name))
             {
                 var foundFileType = await this.Context.FileTypeService.FindFileType(kmlDataType.FileType.Name);
-                kmlDataType.FileTypeID = foundFileType.ID;
+                kmlDataType.FileTypeId = foundFileType.Id;
                 kmlDataType.FileType = null;
             }
 
             kmlDataType = await this.Context.KMLDataTypeService.AddKMLDataType(kmlDataType);
 
-            return CreatedAtRoute("DefaultApi", new { id = kmlDataType.ID }, kmlDataType);
+            return CreatedAtRoute("DefaultApi", new { id = kmlDataType.Id }, kmlDataType);
         }
 
         // DELETE: api/KMLDataTypes/5

@@ -25,8 +25,7 @@ namespace CAPSWeatherAPI.Services
         {
             this.Context.FileTypes.Add(fileType);
             await this.Context.SaveChangesAsync();
-            return await this.Context.CompleteFileTypes().FirstOrDefaultAsync(f => f.ID == fileType.ID);
-
+            return await this.Context.CompleteFileTypes().FirstOrDefaultAsync(f => f.Id == fileType.Id);
         }
 
         public IQueryable<FileType>  GetAllFileTypes()
@@ -36,14 +35,12 @@ namespace CAPSWeatherAPI.Services
 
         public async Task<FileType> GetFileType(int id)
         {
-            return await this.Context.CompleteFileTypes().FirstOrDefaultAsync(f => f.ID == id);
+            return await this.Context.CompleteFileTypes().FirstOrDefaultAsync(f => f.Id == id);
         }
 
         public async Task<FileType> FindFileType(string name)
         {
-
            return await this.Context.CompleteFileTypes().Where(e => e.Name == name).FirstOrDefaultAsync();
-
         }
 
         public async Task<bool> UpdateFileType(FileType fileType)

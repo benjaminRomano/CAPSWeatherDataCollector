@@ -10,8 +10,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using CAPSWeatherAPI.Contexts;
-using CAPSWeatherAPI.Services;
-using WeatherAPIModels;
 using WeatherAPIModels.Models;
 
 namespace CAPSWeatherAPI.Controllers
@@ -26,7 +24,7 @@ namespace CAPSWeatherAPI.Controllers
             return this.Context.FileTypeService.GetAllFileTypes();
         }
 
-        // GET: api/FileTypes/5
+        // GET: api/FileTypes
         [ResponseType(typeof(FileType))]
         public async Task<IHttpActionResult> GetFileType(int id)
         {
@@ -40,7 +38,7 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(fileType);
         }
 
-        // PUT: api/FileTypes/5
+        // PUT: api/FileTypes
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutFileType(int id, FileType fileType)
         {
@@ -49,7 +47,7 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != fileType.ID)
+            if (id != fileType.Id)
             {
                 return BadRequest();
             }
@@ -75,10 +73,10 @@ namespace CAPSWeatherAPI.Controllers
 
             fileType = await this.Context.FileTypeService.AddFileType(fileType);
 
-            return CreatedAtRoute("DefaultApi", new { id = fileType.ID }, fileType);
+            return CreatedAtRoute("DefaultApi", new { id = fileType.Id }, fileType);
         }
 
-        // DELETE: api/FileTypes/5
+        // DELETE: api/FileTypes
         [ResponseType(typeof(FileType))]
         public async Task<IHttpActionResult> DeleteFileType(int id)
         {

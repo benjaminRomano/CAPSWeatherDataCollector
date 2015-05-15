@@ -26,7 +26,7 @@ namespace CAPSWeatherAPI.Services
         {
             this.Context.KMLDataTypes.Add(kmlDataType);
             await this.Context.SaveChangesAsync();
-            return await this.Context.CompleteKMLDataTypes().FirstOrDefaultAsync(k => k.ID == kmlDataType.ID);
+            return await this.Context.CompleteKMLDataTypes().FirstOrDefaultAsync(k => k.Id == kmlDataType.Id);
         }
 
         public IQueryable<KMLDataType> GetAllKMLDataTypes()
@@ -36,7 +36,7 @@ namespace CAPSWeatherAPI.Services
 
         public async Task<KMLDataType> GetKMLDataType(int id)
         {
-            return await this.Context.CompleteKMLDataTypes().FirstOrDefaultAsync(k => k.ID == id);
+            return await this.Context.CompleteKMLDataTypes().FirstOrDefaultAsync(k => k.Id == id);
         }
 
         public async Task<bool> UpdateKMLDataType(KMLDataType kmlDataType)

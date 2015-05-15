@@ -1,23 +1,18 @@
-﻿using WeatherAPIModels.KMLFormatters;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using WeatherAPIModels.FileTypes;
+using WeatherAPIModels.KMLFormatters;
 using WeatherAPIModels.Models;
-using WeatherAPIModels.SpecificModels.FileTypes;
 
-namespace WeatherAPIModels.SpecificModels.KMLDataTypes
+namespace WeatherAPIModels.KMLDataTypes
 {
-    public sealed class RadarKMLDataType : SpecificKMLDataType
+    public class RadarKMLDataType : KMLDataType
     {
-        public RadarKMLDataType()
+        public RadarKMLDataType(int id = 0, int fileTypeId = 0)
         {
             this.Name = "Radar";
             this.FileType = new GifFileType();
-        }
-
-        public RadarKMLDataType(KMLDataType kmlDataType)
-        {
-            this.Name = "Radar";
-            this.FileType = new GifFileType();
-            this.ID = kmlDataType.ID;
-            this.FileTypeID = kmlDataType.FileTypeID;
+            this.Id = id;
+            this.FileTypeId = fileTypeId;
         }
 
         public override kml GenerateKML(string url)

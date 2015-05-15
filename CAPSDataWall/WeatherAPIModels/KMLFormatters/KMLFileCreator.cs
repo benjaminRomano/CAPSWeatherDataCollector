@@ -1,22 +1,20 @@
 ﻿using System.IO;
 using System.Xml.Serialization;
-using WeatherAPIModels.ConvertServices;
 using WeatherAPIModels.Models;
-using WeatherAPIModels.SpecificModels.KMLDataTypes;
 
 namespace WeatherAPIModels.KMLFormatters
 {
+    /// <summary>
+    /// Creates KML File 
+    /// </summary>
     public class KMLFileCreator
     {
-        public void CreateKMLFile(KMLDataType type, string url,string fileName)
+        public void CreateKMLFile(KMLDataType kmlDataType, string url,string fileName)
         {
-            var converter = new SpecificConverterService();
-            SpecificKMLDataType specificType = converter.ConvertToSpecificKMLData(type);
-
-            CreateKMLFile(specificType.GenerateKML(url), fileName);
+            CreateKMLFile(kmlDataType.GenerateKML(url), fileName);
         }
 
-        private void CreateKMLFile<T>(T kmlFile, string fileName)
+        private void CreateKMLFile(kml kmlFile, string fileName) 
         {
             if (kmlFile == null)
             {
@@ -24,7 +22,7 @@ namespace WeatherAPIModels.KMLFormatters
             }
 
             var file = File.Create(fileName);
-            var serializer = new XmlSerializer(typeof (T));
+            var serializer = new XmlSerializer(typeof(kml));
             serializer.Serialize(file, kmlFile);
             file.Close();
         }

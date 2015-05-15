@@ -12,8 +12,8 @@ namespace  WeatherAPIModels.Constants
         public const string KMLData = "KMLData/";
         public const string KMLStream = "KMLStream/";
         public const string Update = "update/";
+        public const string UpdateStatus = "updateStatus/";
         public const string Increment = "increment/";
-        public const string RootStream = "root";
 
 
     }

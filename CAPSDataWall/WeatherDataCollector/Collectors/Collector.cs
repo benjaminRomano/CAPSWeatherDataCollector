@@ -1,52 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using WeatherAPIModels.Clients;
 using WeatherAPIModels.Models;
-using WeatherAPIModels.StreamDescriptions;
-using WeatherDataCollector.Requests;
 using WeatherDataCollector.StorageProvider;
 
-namespace WeatherDataCollector.KMLCollector
+namespace WeatherDataCollector.Collectors
 {
-    public class BaseCollector : ICollector
+    public class Collector : ICollector
     {
         protected IStorageProvider StorageProvider { get; set; }
-        protected KMLStreamDescription StreamDescription { get; set; }
-        protected Timer Collector { get; set; }
+        protected KMLDataType KMLDataType { get; set; }
+        protected Timer CollectorTimer { get; set; }
         protected WeatherDataAPIClient Client { get; set; }
         protected TimeSpan CheckFrequency { get; set; }
 
         protected Func<DateTime,bool> ShouldRunUpdate {get; set; }
         protected Func<IStorageProvider,string,bool> RequestData {get; set; }
 
-        public BaseCollector(IPermanentStorageProvider storageProvider, KMLStreamDescription streamDescription,TimeSpan checkFrequency, Func<DateTime,bool> shouldRunUpdate, Func<IStorageProvider,string,bool> requestData)
+        public Collector(IPermanentStorageProvider storageProvider, KMLDataType kmlDataType,TimeSpan checkFrequency, Func<DateTime,bool> shouldRunUpdate, Func<IStorageProvider,string,bool> requestData)
         {
             this.StorageProvider = storageProvider;
-            this.StreamDescription = streamDescription;
+            this.KMLDataType = kmlDataType;
             this.CheckFrequency = checkFrequency; 
 
             this.ShouldRunUpdate = shouldRunUpdate;
             this.RequestData = requestData;
 
             this.Client = new WeatherDataAPIClient();
-            this.Collector = null;
+            this.CollectorTimer = null;
         }
 
-        public virtual void StartCollector()
+        public void StartCollector()
         {
-            //Timer already started
-            if (this.Collector != null)
+            if (this.CollectorTimer != null)
             {
                 return;
             }
 
-            this.Collector = new Timer(async e =>
+            this.CollectorTimer = new Timer(async e =>
             {
                 var currentTime = DateTime.Now;
 
@@ -63,16 +55,16 @@ namespace WeatherDataCollector.KMLCollector
 
                 if (!dataRequestResponse)
                 {
-                    Console.WriteLine("Could not download {0} data!", this.StreamDescription.KMLDataType.Name);
+                    Console.WriteLine("Could not download {0} data!", this.KMLDataType.Name);
                     return;
                 }
 
                 var addParams = new StorageProviderAddParams()
                 {
-                    ServerFolderName = this.StreamDescription.KMLDataType.Name,
-                    ServerFileName = sanatizedCurrentTime + "." + this.StreamDescription.KMLDataType.FileType.Name,
+                    ServerFolderName = this.KMLDataType.Name,
+                    ServerFileName = sanatizedCurrentTime + "." + this.KMLDataType.FileType.Name,
                     LocalFileName = tempFileName,
-                    ContentType = this.StreamDescription.KMLDataType.FileType.ContentType
+                    ContentType = this.KMLDataType.FileType.ContentType
                 };
 
                 var storageUrl = StorageProvider.Add(addParams);
@@ -82,7 +74,7 @@ namespace WeatherDataCollector.KMLCollector
                 //Set useable url to null if storage provider doesn't support it
                 string useableUrl = null;
 
-                if (!this.StreamDescription.KMLDataType.FileType.RequiresKMLFileCreation
+                if (!this.KMLDataType.FileType.RequiresKMLFileCreation
                     || StorageProvider is IKMLUseableStorageProvider)
                 {
                     useableUrl = storageUrl;
@@ -91,42 +83,32 @@ namespace WeatherDataCollector.KMLCollector
                 var kmlData = new KMLData
                 {
                     CreatedAt = sanatizedCurrentTime,
-                    FileName = sanatizedCurrentTime + "." + this.StreamDescription.KMLDataType.FileType.Name,
+                    FileName = sanatizedCurrentTime + "." + this.KMLDataType.FileType.Name,
                     StorageUrl = storageUrl,
                     UseableUrl = useableUrl,
-                    DataType = this.StreamDescription.KMLDataType
+                    DataType = this.KMLDataType
                 };
 
                 var response = await this.Client.AddKMLData(kmlData);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Could not add {0} data!", this.StreamDescription.KMLDataType.Name);
+                    Console.WriteLine("Could not add {0} data!", this.KMLDataType.Name);
                     return;
                 }
 
-                Console.WriteLine("{0} data uploaded to API!", this.StreamDescription.KMLDataType.Name);
-                kmlData = await response.Content.ReadAsAsync<KMLData>();
-
-                response  = await Client.UpdateKMLStream(this.StreamDescription,kmlData.ID, true);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("Could not update {0} stream", this.StreamDescription);
-                }
+                Console.WriteLine("{0} data uploaded to API!", this.KMLDataType.Name);
 
             }, null, TimeSpan.Zero,this.CheckFrequency);
 
         }
 
-        public virtual void StopCollector()
+        public void StopCollector()
         {
-            if (this.Collector != null)
+            if (this.CollectorTimer != null)
             {
-                this.Collector.Dispose();
+                this.CollectorTimer.Dispose();
             }
-
         }
-
     }
 }

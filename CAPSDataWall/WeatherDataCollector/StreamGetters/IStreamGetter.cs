@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WeatherDataCollector.KMLCollector
+namespace WeatherDataCollector.StreamGetters
 {
-    interface ICollector
+    interface IStreamGetter
     {
-        void StartCollector();
-        void StopCollector();
+        void Start();
+        void Stop();
     }
 }

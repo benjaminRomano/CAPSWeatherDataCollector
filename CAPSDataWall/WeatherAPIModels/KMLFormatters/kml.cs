@@ -1,6 +1,9 @@
 ﻿namespace WeatherAPIModels.KMLFormatters
 {
-    /// <remarks/>
+    //TODO: Use a library instead to be more extendable
+    /// <summary>
+    /// Class to Generate KML file.
+    /// </summary>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://earth.google.com/kml/2.0")]
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://earth.google.com/kml/2.0", IsNullable = false)]
     public partial class kml

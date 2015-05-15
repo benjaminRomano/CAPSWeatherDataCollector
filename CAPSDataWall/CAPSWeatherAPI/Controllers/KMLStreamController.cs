@@ -123,7 +123,7 @@ namespace CAPSWeatherAPI.Controllers
                 var newKMLStream = new KMLStream()
                 {
                     Source = source,
-                    KMLDataID = kmlData.ID,
+                    KMLDataId = kmlData.Id,
                     Name = name,
                     Updated = setUpdated
 
@@ -142,7 +142,7 @@ namespace CAPSWeatherAPI.Controllers
                 return Ok(currentStream);
             }
 
-            currentStream.KMLDataID = kmlData.ID;
+            currentStream.KMLDataId = kmlData.Id;
             currentStream.KMLData = kmlData;
 
             var success =  await this.Context.KMLStreamService.UpdateKMLStream(currentStream);
@@ -160,7 +160,7 @@ namespace CAPSWeatherAPI.Controllers
         [Route("api/KMLStream/update")]
         public async Task<IHttpActionResult> UpdateKMLStream(KMLDataSource source, KMLData kmlData, string name, bool setUpdated)
         {
-            var exists = this.Context.KMLDataService.KMLDataExists(kmlData.ID);
+            var exists = this.Context.KMLDataService.KMLDataExists(kmlData.Id);
 
             if (!exists)
             {
@@ -175,7 +175,7 @@ namespace CAPSWeatherAPI.Controllers
                 var newKMLStream = new KMLStream()
                 {
                     Source = source,
-                    KMLDataID = kmlData.ID,
+                    KMLDataId = kmlData.Id,
                     Name = name,
                     Updated = setUpdated
 
@@ -225,7 +225,7 @@ namespace CAPSWeatherAPI.Controllers
                     Source = source,
                     Name = name,
                     Updated = setUpdated,
-                    KMLDataID = kmlData.ID
+                    KMLDataId = kmlData.Id
                 };
 
                 newKMLStream = await this.Context.KMLStreamService.AddKMLStream(newKMLStream);
@@ -235,7 +235,7 @@ namespace CAPSWeatherAPI.Controllers
 
             //Record found update it
             currentStream.KMLData = kmlData;
-            currentStream.KMLDataID = kmlData.ID;
+            currentStream.KMLDataId = kmlData.Id;
             if (setUpdated)
             {
                 currentStream.Updated = true;
@@ -262,7 +262,7 @@ namespace CAPSWeatherAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != kmlStream.ID)
+            if (id != kmlStream.Id)
             {
                 return BadRequest();
             }
@@ -300,7 +300,7 @@ namespace CAPSWeatherAPI.Controllers
 
             kmlStream = await this.Context.KMLStreamService.AddKMLStream(kmlStream);
 
-            return CreatedAtRoute("DefaultApi", new { id = kmlStream.ID }, kmlStream);
+            return CreatedAtRoute("DefaultApi", new { id = kmlStream.Id }, kmlStream);
         }
 
         // DELETE: api/KMLStream/5

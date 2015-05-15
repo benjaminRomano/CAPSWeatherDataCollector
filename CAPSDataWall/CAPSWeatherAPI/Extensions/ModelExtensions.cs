@@ -9,6 +9,9 @@ using WeatherAPIModels.Models;
 
 namespace CAPSWeatherAPI.Extensions
 {
+    /// <summary>
+    /// Extensions for getting complete models
+    /// </summary>
     public static class ModelExtensions
     {
         public static IQueryable<KMLData> CompleteKMLData(this WeatherDataContext context)

@@ -47,8 +47,8 @@ namespace CAPSWeatherAPI.Services
 
         public async Task<KMLData> GetNextRecord(KMLData currentKMLData)
         {
-            return await this.Context.CompleteKMLData().Where(k => k.ID > currentKMLData.ID && k.DataTypeID == currentKMLData.DataTypeID)
-                .OrderBy(k => k.ID).FirstOrDefaultAsync();
+            return await this.Context.CompleteKMLData().Where(k => k.Id > currentKMLData.Id && k.DataTypeId == currentKMLData.DataTypeId)
+                .OrderBy(k => k.Id).FirstOrDefaultAsync();
         }
 
         public async Task<KMLData> GetLatest(string kmlDataTypeName)
@@ -60,7 +60,7 @@ namespace CAPSWeatherAPI.Services
         {
             this.Context.KMLData.Add(kmlData);
             await this.Context.SaveChangesAsync();
-            return await this.Context.CompleteKMLData().FirstOrDefaultAsync(k => k.ID == kmlData.ID);
+            return await this.Context.CompleteKMLData().FirstOrDefaultAsync(k => k.Id == kmlData.Id);
         }
 
         public IQueryable<KMLData> GetAllKMLData()
@@ -70,7 +70,7 @@ namespace CAPSWeatherAPI.Services
 
         public async Task<KMLData> GetKMLData(int id)
         {
-            return await this.Context.CompleteKMLData().FirstOrDefaultAsync(k => k.ID == id);
+            return await this.Context.CompleteKMLData().FirstOrDefaultAsync(k => k.Id == id);
         }
 
         public async Task<bool> UpdateKMLData(KMLData kmlData)
@@ -85,7 +85,7 @@ namespace CAPSWeatherAPI.Services
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!KMLDataExists(kmlData.ID))
+                if (!KMLDataExists(kmlData.Id))
                 {
                     success = false;
                 }
@@ -106,7 +106,7 @@ namespace CAPSWeatherAPI.Services
 
         public bool KMLDataExists(int id)
         {
-            return this.Context.KMLData.Count(e => e.ID == id) > 0;
+            return this.Context.KMLData.Count(e => e.Id == id) > 0;
         }
 
         public IQueryable<KMLData> GetAllKMLData(string typeName)

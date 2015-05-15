@@ -26,7 +26,7 @@ namespace CAPSWeatherAPI.Services
         {
                 this.Context.KMLStreams.Add(kmlStream);
                 await this.Context.SaveChangesAsync();
-                return await this.Context.CompleteKMLStreams().FirstOrDefaultAsync(k => k.ID == kmlStream.ID);
+                return await this.Context.CompleteKMLStreams().FirstOrDefaultAsync(k => k.Id == kmlStream.Id);
         }
 
         public IQueryable<KMLStream> GetAllKMLStreams()
@@ -36,7 +36,7 @@ namespace CAPSWeatherAPI.Services
 
         public async Task<KMLStream> GetKMLStream(int id)
         {
-            return await this.Context.CompleteKMLStreams().FirstOrDefaultAsync(k => k.ID == id);
+            return await this.Context.CompleteKMLStreams().FirstOrDefaultAsync(k => k.Id == id);
         }
 
         public async Task<bool> UpdateKMLStream(KMLStream kmlStream)
@@ -51,7 +51,7 @@ namespace CAPSWeatherAPI.Services
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!KMLStreamExists(kmlStream.ID))
+                if (!KMLStreamExists(kmlStream.Id))
                 {
                     success = false;
                 }
@@ -78,7 +78,7 @@ namespace CAPSWeatherAPI.Services
 
         public bool KMLStreamExists(int id)
         {
-            return this.Context.KMLStreams.Count(e => e.ID == id) > 0;
+            return this.Context.KMLStreams.Count(e => e.Id == id) > 0;
         }
 
         public IQueryable<String> GetStreamNames()
