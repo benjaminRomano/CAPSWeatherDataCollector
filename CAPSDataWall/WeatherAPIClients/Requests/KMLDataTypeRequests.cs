@@ -29,13 +29,13 @@ namespace WeatherAPIClients.Requests
 
         public async Task<HttpResponseMessage> GetKMLDataType(int id)
         {
-            var requestUri = String.Concat(this.KMLDataTypeUri, "?id=", id);
+            var requestUri = String.Concat(this.KMLDataTypeUri, id);
             return await Client.GetAsync(requestUri);
         }
 
         public async Task<HttpResponseMessage> PutKMLDataType(int id, KMLDataType kmlDataType)
         {
-            var requestUri = String.Concat(this.KMLDataTypeUri, "?id=", id);
+            var requestUri = String.Concat(this.KMLDataTypeUri, id);
             return await Client.PutAsJsonAsync(requestUri, kmlDataType);
         }
 
@@ -46,7 +46,7 @@ namespace WeatherAPIClients.Requests
 
         public async Task<HttpResponseMessage> DeleteKMLDataType(int id)
         {
-            var requestUri = String.Concat(this.KMLDataTypeUri, "?id=", id);
+            var requestUri = String.Concat(this.KMLDataTypeUri, id);
             return await Client.DeleteAsync(requestUri);
         }
     }

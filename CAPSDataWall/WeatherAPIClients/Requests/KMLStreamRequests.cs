@@ -42,7 +42,7 @@ namespace WeatherAPIClients.Requests
 
         public async Task<HttpResponseMessage> GetKMLStream(int id)
         {
-            var requestUri = String.Concat(this.KMLStreamUri, "?id=", id);
+            var requestUri = String.Concat(this.KMLStreamUri, id);
             return await Client.GetAsync(requestUri);
         }
 
@@ -69,7 +69,7 @@ namespace WeatherAPIClients.Requests
 
         public async Task<HttpResponseMessage> PutKMLStream(int id, KMLStream stream)
         {
-            var requestUri = String.Concat(this.KMLStreamUri, "?id=", id);
+            var requestUri = String.Concat(this.KMLStreamUri, id);
             return await Client.PutAsJsonAsync(requestUri, stream);
         }
 
@@ -80,7 +80,7 @@ namespace WeatherAPIClients.Requests
 
         public async Task<HttpResponseMessage> DeleteKMLStream(int id)
         {
-            var requestUri = String.Concat(this.KMLStreamUri, "?id=", id);
+            var requestUri = String.Concat(this.KMLStreamUri, id);
             return await Client.DeleteAsync(requestUri);
         }
     }

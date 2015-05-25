@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
-using WeatherDataCollector.Constants;
+﻿using WeatherDataCollector.Constants;
 using WeatherDataCollector.StorageProvider;
 
 namespace WeatherDataCollector.Requests

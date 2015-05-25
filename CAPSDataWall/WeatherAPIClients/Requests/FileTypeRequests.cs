@@ -29,13 +29,13 @@ namespace WeatherAPIClients.Requests
 
         public async Task<HttpResponseMessage> GetFileType(int id)
         {
-            var requestUri = String.Concat(this.FileTypeUri, "?id=", id);
+            var requestUri = String.Concat(this.FileTypeUri, id);
             return await Client.GetAsync(requestUri);
         }
 
         public async Task<HttpResponseMessage> PutFileType(int id, FileType fileType)
         {
-            var requestUri = String.Concat(this.FileTypeUri, "?id=", id);
+            var requestUri = String.Concat(this.FileTypeUri,id);
             return await Client.PutAsJsonAsync(requestUri, fileType);
         }
 
@@ -43,5 +43,11 @@ namespace WeatherAPIClients.Requests
         {
             return await Client.PostAsJsonAsync(this.FileTypeUri, fileType);
         }
+
+        public async Task<HttpResponseMessage> DeleteFileType(int id)
+        {
+            var requestUri = String.Concat(this.FileTypeUri,id);
+            return await Client.DeleteAsync(requestUri);
+        } 
     }
 }
