@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using WeatherAPIModels.Clients;
+using WeatherAPIClients.Clients;
 using WeatherAPIModels.Models;
+using WeatherDataCollector.Constants;
 using WeatherDataCollector.StorageProvider;
 
 namespace WeatherDataCollector.Collectors
@@ -12,7 +13,7 @@ namespace WeatherDataCollector.Collectors
         protected IStorageProvider StorageProvider { get; set; }
         protected KMLDataType KMLDataType { get; set; }
         protected Timer CollectorTimer { get; set; }
-        protected WeatherDataAPIClient Client { get; set; }
+        protected WeatherAPIClient Client { get; set; }
         protected TimeSpan CheckFrequency { get; set; }
 
         protected Func<DateTime,bool> ShouldRunUpdate {get; set; }
@@ -27,7 +28,7 @@ namespace WeatherDataCollector.Collectors
             this.ShouldRunUpdate = shouldRunUpdate;
             this.RequestData = requestData;
 
-            this.Client = new WeatherDataAPIClient();
+            this.Client = new WeatherAPIClient(WeatherDataConstants.WeatherAPIUri);
             this.CollectorTimer = null;
         }
 
@@ -89,7 +90,7 @@ namespace WeatherDataCollector.Collectors
                     DataType = this.KMLDataType
                 };
 
-                var response = await this.Client.AddKMLData(kmlData);
+                var response = await this.Client.KMLData.PutKMLData(kmlData);
 
                 if (!response.IsSuccessStatusCode)
                 {

@@ -161,10 +161,10 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Contexts\WeatherAPIContext.cs" />
-    <Compile Include="Controllers\FileTypesController.cs" />
+    <Compile Include="Controllers\FileTypeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KMLDataController.cs" />
-    <Compile Include="Controllers\KMLDataTypesController.cs" />
+    <Compile Include="Controllers\KMLDataTypeController.cs" />
     <Compile Include="Controllers\KMLStreamController.cs" />
     <Compile Include="Extensions\ModelExtensions.cs" />
     <Compile Include="Global.asax.cs">

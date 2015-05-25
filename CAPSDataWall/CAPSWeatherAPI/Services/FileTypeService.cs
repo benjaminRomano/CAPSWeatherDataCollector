@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using CAPSWeatherAPI.Contexts;
 using CAPSWeatherAPI.Extensions;
-using WeatherAPIModels;
 using WeatherAPIModels.Models;
 
 namespace CAPSWeatherAPI.Services
@@ -40,7 +38,7 @@ namespace CAPSWeatherAPI.Services
 
         public async Task<FileType> FindFileType(string name)
         {
-           return await this.Context.CompleteFileTypes().Where(e => e.Name == name).FirstOrDefaultAsync();
+           return await this.Context.CompleteFileTypes().Where(f => f.Name == name).FirstOrDefaultAsync();
         }
 
         public async Task<bool> UpdateFileType(FileType fileType)
@@ -76,7 +74,7 @@ namespace CAPSWeatherAPI.Services
 
         public bool FileTypeExists(string name)
         {
-            return this.Context.FileTypes.Count(e => e.Name == name) > 0;
+            return this.Context.FileTypes.Count(f => f.Name == name) > 0;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace CAPSWeatherAPI.Services
 
         public async Task<KMLData> GetDataAtTime(DateTime targetDate, string typeName)
         {
-            var nearestDataTimeDiff = await this.Context.KMLData.Where(c=> c.DataType.Name == typeName).MinAsync(c => SqlFunctions.DateDiff("minute", c.CreatedAt, targetDate));
+            var nearestDataTimeDiff = await this.Context.KMLData.Where(k => k.DataType.Name == typeName).MinAsync(k => SqlFunctions.DateDiff("minute", k.CreatedAt, targetDate));
 
             if (nearestDataTimeDiff == null)
             {
@@ -38,8 +38,8 @@ namespace CAPSWeatherAPI.Services
             //Only care if diff is less than or equal to 10 minutes
             if (Math.Abs(nearestDiff) <= 10)
             {
-                kmlData = await this.Context.CompleteKMLData().Where(c => c.DataType.Name == typeName)
-                    .FirstAsync(c => SqlFunctions.DateDiff("minute", c.CreatedAt, targetDate) == nearestDiff);
+                kmlData = await this.Context.CompleteKMLData().Where(k => k.DataType.Name == typeName)
+                    .FirstAsync(k => SqlFunctions.DateDiff("minute", k.CreatedAt, targetDate) == nearestDiff);
             }
 
             return kmlData;
@@ -106,7 +106,7 @@ namespace CAPSWeatherAPI.Services
 
         public bool KMLDataExists(int id)
         {
-            return this.Context.KMLData.Count(e => e.Id == id) > 0;
+            return this.Context.KMLData.Count(k => k.Id == id) > 0;
         }
 
         public IQueryable<KMLData> GetAllKMLData(string typeName)

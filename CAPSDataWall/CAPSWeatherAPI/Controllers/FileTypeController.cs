@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -14,18 +8,19 @@ using WeatherAPIModels.Models;
 
 namespace CAPSWeatherAPI.Controllers
 {
-    public class FileTypesController : ApiController
+    public class FileTypeController : ApiController
     {
         private WeatherAPIContext Context = new WeatherAPIContext();
 
         // GET: api/FileTypes
+        [HttpGet]
         public IQueryable<FileType> GetFileTypes()
         {
             return this.Context.FileTypeService.GetAllFileTypes();
         }
 
         // GET: api/FileTypes
-        [ResponseType(typeof(FileType))]
+        [HttpGet]
         public async Task<IHttpActionResult> GetFileType(int id)
         {
             var fileType = await this.Context.FileTypeService.GetFileType(id);
@@ -39,7 +34,7 @@ namespace CAPSWeatherAPI.Controllers
         }
 
         // PUT: api/FileTypes
-        [ResponseType(typeof(void))]
+        [HttpPut]
         public async Task<IHttpActionResult> PutFileType(int id, FileType fileType)
         {
             if (!ModelState.IsValid)
@@ -63,7 +58,7 @@ namespace CAPSWeatherAPI.Controllers
         }
 
         // POST: api/FileTypes
-        [ResponseType(typeof(FileType))]
+        [HttpPost]
         public async Task<IHttpActionResult> PostFileType(FileType fileType)
         {
             if (!ModelState.IsValid)
@@ -77,7 +72,7 @@ namespace CAPSWeatherAPI.Controllers
         }
 
         // DELETE: api/FileTypes
-        [ResponseType(typeof(FileType))]
+        [HttpDelete]
         public async Task<IHttpActionResult> DeleteFileType(int id)
         {
             var fileType = await this.Context.FileTypeService.GetFileType(id);
@@ -89,7 +84,7 @@ namespace CAPSWeatherAPI.Controllers
 
             this.Context.FileTypeService.DeleteFileType(fileType);
             
-            return Ok(fileType);
+            return Ok();
         }
 
     }

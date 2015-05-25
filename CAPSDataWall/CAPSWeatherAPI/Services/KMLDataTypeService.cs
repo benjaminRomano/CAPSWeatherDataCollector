@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web.Http.ModelBinding;
 using CAPSWeatherAPI.Contexts;
 using CAPSWeatherAPI.Extensions;
-using WeatherAPIModels;
 using WeatherAPIModels.Models;
 
 namespace CAPSWeatherAPI.Services
@@ -69,7 +64,6 @@ namespace CAPSWeatherAPI.Services
             this.Context.KMLDataTypes.Remove(kmlDataType);
             await this.Context.SaveChangesAsync();
         }
-
 
         public async Task<KMLDataType> FindKMLDataType(string name)
         {

@@ -121,9 +121,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WeatherAPIInterface\WeatherAPIInterface.csproj">
-      <Project>{C6E63783-9C2B-4AA1-989E-A74348FE5DDB}</Project>
-      <Name>WeatherAPIInterface</Name>
+    <ProjectReference Include="..\WeatherAPIClients\WeatherAPIClients.csproj">
+      <Project>{d358b0e7-3617-4eb5-9804-83ba9e71e9ac}</Project>
+      <Name>WeatherAPIClients</Name>
     </ProjectReference>
     <ProjectReference Include="..\WeatherAPIModels\WeatherAPIModels.csproj">
       <Project>{d8ade33e-53ce-4ff7-b84f-69fe0317305a}</Project>

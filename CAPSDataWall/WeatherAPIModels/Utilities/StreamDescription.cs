@@ -1,29 +1,25 @@
-﻿using System;
-using WeatherAPIModels.Models;
-
-namespace WeatherAPIModels.StreamDescriptions
+﻿namespace WeatherAPIModels.Utilities
 {
     /// <summary>
     /// Immutable stream identifier
     /// </summary>
     public class StreamDescription
     {
-        public KMLDataType KMLDataType { get; private set; }
+        public string KMLDataTypeName { get; private set; }
         public string StreamName { get; private set; }
 
-        public StreamDescription(KMLDataType kmlDataType, string streamName)
+        public StreamDescription(string kmlDataTypeName, string streamName)
         {
-            this.KMLDataType = kmlDataType;
+            this.KMLDataTypeName = kmlDataTypeName;
             this.StreamName = streamName;
         }
 
         /// <summary>
         /// Prints out Stream Name and DataType Name
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
-            return StreamName + " " + KMLDataType.Name;
+            return this.StreamName + " " + this.KMLDataTypeName;
         }
     }
 }

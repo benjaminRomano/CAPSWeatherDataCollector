@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using CAPSWeatherAPI.Contexts;
-using CAPSWeatherAPI.Services;
-using WeatherAPIModels;
 using WeatherAPIModels.Models;
 
 namespace CAPSWeatherAPI.Controllers
 {
-    public class KMLDataTypesController : ApiController
+    public class KMLDataTypeController : ApiController
     {
         private WeatherAPIContext Context = new WeatherAPIContext();
 
@@ -26,8 +18,7 @@ namespace CAPSWeatherAPI.Controllers
             return this.Context.KMLDataTypeService.GetAllKMLDataTypes();
         }
 
-        // GET: api/KMLDataTypes/5
-        [ResponseType(typeof(KMLDataType))]
+        // GET: api/KMLDataTypes
         public async Task<IHttpActionResult> GetKMLDataType(int id)
         {
             var kmlDataType = await this.Context.KMLDataTypeService.GetKMLDataType(id);
@@ -40,8 +31,7 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(kmlDataType);
         }
 
-        // PUT: api/KMLDataTypes/5
-        [ResponseType(typeof(void))]
+        // PUT: api/KMLDataTypes
         public async Task<IHttpActionResult> PutKMLDataType(int id, KMLDataType kmlDataType)
         {
             if (!ModelState.IsValid)
@@ -65,7 +55,6 @@ namespace CAPSWeatherAPI.Controllers
         }
 
         // POST: api/KMLDataTypes
-        [ResponseType(typeof(KMLDataType))]
         public async Task<IHttpActionResult> PostKMLDataType(KMLDataType kmlDataType)
         {
             if (!ModelState.IsValid)
@@ -85,8 +74,7 @@ namespace CAPSWeatherAPI.Controllers
             return CreatedAtRoute("DefaultApi", new { id = kmlDataType.Id }, kmlDataType);
         }
 
-        // DELETE: api/KMLDataTypes/5
-        [ResponseType(typeof(KMLDataType))]
+        // DELETE: api/KMLDataTypes
         public async Task<IHttpActionResult> DeleteKMLDataType(int id)
         {
             var kmlDataType = await this.Context.KMLDataTypeService.GetKMLDataType(id);

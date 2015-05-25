@@ -10,6 +10,7 @@ using CAPSWeatherAPI.Contexts;
 using CAPSWeatherAPI.Extensions;
 using WeatherAPIModels;
 using WeatherAPIModels.Models;
+using WeatherAPIModels.Utilities;
 
 namespace CAPSWeatherAPI.Services
 {
@@ -39,6 +40,12 @@ namespace CAPSWeatherAPI.Services
             return await this.Context.CompleteKMLStreams().FirstOrDefaultAsync(k => k.Id == id);
         }
 
+        public async Task<KMLStream> GetKMLStream(StreamDescription description)
+        {
+            return await this.Context.CompleteKMLStreams()
+                .FirstOrDefaultAsync(k => k.KMLData.DataType.Name == description.KMLDataTypeName && k.Name == description.StreamName);
+        }
+
         public async Task<bool> UpdateKMLStream(KMLStream kmlStream)
         {
             var success = true;
@@ -64,40 +71,26 @@ namespace CAPSWeatherAPI.Services
             return success;
         }
 
-        public async Task<KMLStream> GetSpecificStream(KMLDataSource source, string typeName, string name)
-        {
-            return await this.Context.CompleteKMLStreams().Where(c => c.Source == source && c.KMLData.DataType.Name == typeName && c.Name == name)
-                            .FirstOrDefaultAsync();
-        }
-
         public async void DeleteKMLStream(KMLStream kmlStream)
         {
-                this.Context.KMLStreams.Remove(kmlStream);
-                await this.Context.SaveChangesAsync();
+            this.Context.KMLStreams.Remove(kmlStream);
+            await this.Context.SaveChangesAsync();
         }
 
         public bool KMLStreamExists(int id)
         {
-            return this.Context.KMLStreams.Count(e => e.Id == id) > 0;
+            return this.Context.KMLStreams.Count(k => k.Id == id) > 0;
         }
 
         public IQueryable<String> GetStreamNames()
         {
-            return this.Context.KMLStreams.Select(n => n.Name).Distinct();
+            return this.Context.KMLStreams.Select(k => k.Name).Distinct();
         }
 
-        public IList<KMLDataSource> GetSources(string name)
+        public IQueryable<string> GetDataTypes(string name)
         {
-            return this.Context.KMLStreams.Where(s => s.Name == name)
-                    .Select(s => s.Source)
-                    .Distinct()
-                    .ToList();
-        }
-
-        public IQueryable<string> GetDataTypes(string name, KMLDataSource source)
-        {
-            return this.Context.KMLStreams.Where(s => s.Source == source && s.Name == name)
-                    .Select(n => n.KMLData.DataType.Name).Distinct();
+            return this.Context.KMLStreams.Where(k => k.Name == name)
+                .Select(k => k.KMLData.DataType.Name).Distinct();
         }
 
     }

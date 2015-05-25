@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices.ComTypes;
 using WeatherAPIModels.KMLDataTypes;
-using WeatherAPIModels.StreamDescriptions;
+using WeatherAPIModels.Utilities;
 using WeatherDataCollector.Constants;
 using WeatherDataCollector.Collectors;
 using WeatherDataCollector.Requests;
@@ -15,11 +15,11 @@ namespace WeatherDataCollector
     {
         static void Main(string[] args)
         {
-            //TODO: Clean up front-end
+            //TODO: Re-do website interface since it's broken
             //TODO: Create Composite Streams
             //TODO: Add tests to verify changes
             //TODO: Create a latestStreamGetter
-            //TODO: Check every 10 seconds if change in getter (Save last kmlDataId)
+            //TODO: Check every 10 seconds if change in getter (Save last kmlDataId to check if it is different)
 
             const string historicalRootStreamName = "historicalRoot";
             const string latestRootStreamName = "latestRoot";
@@ -30,8 +30,8 @@ namespace WeatherDataCollector
             var irSatelliteKMLDataType = new IRSatelliteKMLDataType();
 
             //Initialize KML Stream Descriptions
-            var latestRadarRoot = new StreamDescription(radarKMLDataType, latestRootStreamName);
-            var historicalRadarRoot = new StreamDescription(radarKMLDataType, historicalRootStreamName);
+            var latestRadarRoot = new StreamDescription(radarKMLDataType.Name, latestRootStreamName);
+            var historicalRadarRoot = new StreamDescription(radarKMLDataType.Name, historicalRootStreamName);
 
             //Initialize Storage Providers
             IPermanentStorageProvider storageProvider = new GoogleDriveStorageProvider(GoogleConstants.GoogleDriveAppClientId,

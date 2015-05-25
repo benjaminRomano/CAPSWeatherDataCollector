@@ -17,5 +17,7 @@ namespace WeatherDataCollector.Constants
         public const string TemperatureFileName = "temperature.kmz";
         public const string IRSatelliteFileName = "irsatellite.kmz";
 
+        public const string WeatherAPIUri = "http://localhost:11785/api/";
+
     }
 }

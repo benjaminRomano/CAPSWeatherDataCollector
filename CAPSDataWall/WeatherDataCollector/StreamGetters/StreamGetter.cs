@@ -3,10 +3,11 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using WeatherAPIModels.Clients;
+using WeatherAPIClients.Clients;
 using WeatherAPIModels.KMLFormatters;
 using WeatherAPIModels.Models;
-using WeatherAPIModels.StreamDescriptions;
+using WeatherAPIModels.Utilities;
+using WeatherDataCollector.Constants;
 using WeatherDataCollector.Requests;
 using WeatherDataCollector.StorageProvider;
 
@@ -16,7 +17,7 @@ namespace WeatherDataCollector.StreamGetters
     {
         private string FilePath { get; set; }
         private Timer StreamGetterTimer { get; set; }
-        private WeatherDataAPIClient Client { get; set; }
+        private WeatherAPIClient Client { get; set; }
         private StreamDescription StreamDescription { get; set; }
         private IKMLUseableStorageProvider StorageProvider { get; set; }
         private TimeSpan UpdateFrequency { get; set; }
@@ -28,7 +29,7 @@ namespace WeatherDataCollector.StreamGetters
             this.FilePath = filePath;
             this.UpdateFrequency = updateFrequency;
 
-            this.Client = new WeatherDataAPIClient();
+            this.Client = new WeatherAPIClient(WeatherDataConstants.WeatherAPIUri);
 
             this.StreamGetterTimer = null;
         }
@@ -42,7 +43,7 @@ namespace WeatherDataCollector.StreamGetters
 
             this.StreamGetterTimer = new Timer(async e =>
             {
-                var response = await Client.GetKMLStream(this.StreamDescription);
+                var response = await Client.KMLStream.GetKMLStream(this.StreamDescription);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -136,7 +137,7 @@ namespace WeatherDataCollector.StreamGetters
         {
             kmlData.UseableUrl = useableUrl;
 
-            var response = await this.Client.UpdateKMLData(kmlData);
+            var response = await this.Client.KMLData.PutKMLData(kmlData);
 
             if (!response.IsSuccessStatusCode)
             {

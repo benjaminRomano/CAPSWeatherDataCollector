@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Net.Http;
 using System.Threading;
-using WeatherAPIModels.Clients;
-using WeatherAPIModels.Models;
-using WeatherAPIModels.StreamDescriptions;
-using WeatherDataCollector.StorageProvider;
+using WeatherAPIClients.Clients;
+using WeatherAPIModels.Utilities;
+using WeatherDataCollector.Constants;
 
 namespace WeatherDataCollector.StreamUpdaters
 {
     public class StreamUpdater : IStreamUpdater
     {
         private Timer StreamUpdateTimer { get; set; }
-        private WeatherDataAPIClient Client { get; set; }
+        private WeatherAPIClient Client { get; set; }
         private StreamDescription StreamDescription { get; set; }
         private TimeSpan UpdateFrequency { get; set; }
 
@@ -20,7 +18,7 @@ namespace WeatherDataCollector.StreamUpdaters
             this.StreamDescription = streamDescription;
             this.UpdateFrequency = updateFrequency;
 
-            this.Client = new WeatherDataAPIClient();
+            this.Client = new WeatherAPIClient(WeatherDataConstants.WeatherAPIUri);
 
             this.StreamUpdateTimer = null;
         }
@@ -34,7 +32,7 @@ namespace WeatherDataCollector.StreamUpdaters
 
             this.StreamUpdateTimer = new Timer(async e =>
             {
-                var response = await Client.IncrementKMLStream(this.StreamDescription);
+                var response = await Client.KMLStream.IncrementKMLStream(this.StreamDescription);
 
                 if (!response.IsSuccessStatusCode)
                 {
