@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,7 +48,7 @@ namespace WeatherDataCollector.StreamGetters
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Failed to get stream");
+                    Console.WriteLine("StreamGetter: Could not get stream");
                     return;
                 }
 
@@ -60,7 +61,7 @@ namespace WeatherDataCollector.StreamGetters
 
                     if (useableUrl == null)
                     {
-                        Console.WriteLine("Could not upload kml data to useable storage");
+                        Console.WriteLine("StreamGetter: Could not upload kml data to useable storage");
                         return;
                     }
 
@@ -68,7 +69,7 @@ namespace WeatherDataCollector.StreamGetters
 
                     if (!success)
                     {
-                        Console.WriteLine("Could not update kml data useable url");
+                        Console.WriteLine("StreamGetter: Could not update kml data useable url");
                         return;
                     }
                 }
@@ -77,7 +78,7 @@ namespace WeatherDataCollector.StreamGetters
 
                 if (!updated)
                 {
-                    Console.WriteLine("Failed to update local stream file");
+                    Console.WriteLine("StreamGetter: Failed to update local stream file");
                     return;
                 }
 
@@ -123,12 +124,12 @@ namespace WeatherDataCollector.StreamGetters
 
                 if (!success)
                 {
-                    Console.WriteLine("Could not download file for {0} stream", this.StreamDescription);
+                    Console.WriteLine("StreamGetter: Could not download file for {0} stream", this.StreamDescription);
                     return false;
                 }
             }
 
-            Console.WriteLine("{0} stream updated!", this.StreamDescription);
+            Console.WriteLine("StreamGetter: {0} stream updated!", this.StreamDescription);
 
             return true;
         }
@@ -141,7 +142,7 @@ namespace WeatherDataCollector.StreamGetters
 
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine("Could not Update KML Data with useable URL");
+                Console.WriteLine("StreamGetter: Could not Update KML Data with useable URL");
                 return false;
             }
 

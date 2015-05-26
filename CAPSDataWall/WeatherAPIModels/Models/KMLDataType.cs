@@ -5,7 +5,7 @@ using WeatherAPIModels.KMLFormatters;
 
 namespace WeatherAPIModels.Models
 {
-    public abstract class KMLDataType
+    public class KMLDataType
     {
         public int Id { get; set; }
 
@@ -18,6 +18,5 @@ namespace WeatherAPIModels.Models
         [ForeignKey("FileTypeId")]
         public FileType FileType { get; set; }
 
-        public abstract kml GenerateKML(string url);
     }
 }

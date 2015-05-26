@@ -11,6 +11,5 @@ namespace WeatherAPIModels.Models
 
         [ForeignKey("KMLDataId")]
         public KMLData KMLData { get; set; }
-
     }
 }

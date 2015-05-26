@@ -5,7 +5,7 @@ namespace WeatherDataCollector.Requests
 {
     public class NOAARequests
     {
-        public static bool RadarDataRequest(IStorageProvider storageProvider,string tempFileName)
+        public static bool GetRadarData(IStorageProvider storageProvider,string tempFileName)
         {
             return RequestHelper.DownloadFile(WeatherDataConstants.RadarDataUrl, tempFileName);
         }

@@ -15,6 +15,5 @@ namespace WeatherAPIModels.Models
 
         [ForeignKey("DataTypeId")]
         public KMLDataType DataType { get; set; }
-
     }
 }

@@ -2,8 +2,9 @@
 {
     //TODO: Use a library instead to be more extendable
     /// <summary>
-    /// Class to Generate KML file.
+    /// KML File Definition. 
     /// </summary>
+    //Note: Requires lowercase class name to create valid KML
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://earth.google.com/kml/2.0")]
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://earth.google.com/kml/2.0", IsNullable = false)]
     public partial class kml

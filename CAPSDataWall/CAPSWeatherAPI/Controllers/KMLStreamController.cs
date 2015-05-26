@@ -20,8 +20,6 @@ namespace CAPSWeatherAPI.Controllers
 
         private WeatherAPIContext Context = new WeatherAPIContext();
 
-        [Route("api/KMLStream")]
-        [HttpGet]
         public IQueryable<KMLStream> GetKMLStreams()
         {
             return this.Context.KMLStreamService.GetAllKMLStreams();
@@ -41,9 +39,6 @@ namespace CAPSWeatherAPI.Controllers
             return this.Context.KMLStreamService.GetDataTypes(name);
         }
 
-        //GET: api/KMLStream
-        [Route("api/KMLStream")]
-        [HttpGet]
         public async Task<IHttpActionResult> GetKMLStream(int id)
         {
             var kmlStream = await this.Context.KMLStreamService.GetKMLStream(id);
@@ -56,8 +51,6 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(kmlStream);
         }
 
-        [Route("api/KMLStream")]
-        [HttpGet]
         public async Task<IHttpActionResult> GetKMLStream(string kmlDataTypeName, string streamName)
         {
             var description = new StreamDescription(kmlDataTypeName,streamName);
@@ -124,8 +117,6 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(stream);
         }
 
-        [Route("api/KMLStream")]
-        [HttpPut]
         public async Task<IHttpActionResult> PutKMLStream(int kmlDataId, string kmlDataTypeName, string streamName)
         {
 
@@ -168,9 +159,6 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(stream);
         }
 
-        // PUT: api/KMLStream
-        [Route("api/KMLStream")]
-        [HttpPut]
         public async Task<IHttpActionResult> PutKMLStream(int id, KMLStream stream)
         {
             if (!ModelState.IsValid)
@@ -193,9 +181,6 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(stream);
         }
 
-        // POST: api/KMLStream
-        [Route("api/KMLStream")]
-        [HttpPost]
         public async Task<IHttpActionResult> PostKMLStream(KMLStream stream)
         {
             if (!ModelState.IsValid)
@@ -217,9 +202,6 @@ namespace CAPSWeatherAPI.Controllers
             return CreatedAtRoute("DefaultApi", new { id = stream.Id }, stream);
         }
 
-        // DELETE: api/KMLStream
-        [Route("api/KMLStream")]
-        [HttpDelete]
         public async Task<IHttpActionResult> DeleteKMLStream(int id)
         {
             var kmlStream = await this.Context.KMLStreamService.GetKMLStream(id);

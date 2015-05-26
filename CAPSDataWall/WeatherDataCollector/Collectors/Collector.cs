@@ -56,7 +56,7 @@ namespace WeatherDataCollector.Collectors
 
                 if (!dataRequestResponse)
                 {
-                    Console.WriteLine("Could not download {0} data!", this.KMLDataType.Name);
+                    Console.WriteLine("Collector: Could not download {0} data!", this.KMLDataType.Name);
                     return;
                 }
 
@@ -90,15 +90,15 @@ namespace WeatherDataCollector.Collectors
                     DataType = this.KMLDataType
                 };
 
-                var response = await this.Client.KMLData.PutKMLData(kmlData);
+                var response = await this.Client.KMLData.PostKMLData(kmlData);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Could not add {0} data!", this.KMLDataType.Name);
+                    Console.WriteLine("Collector: Could not add {0} data!", this.KMLDataType.Name);
                     return;
                 }
 
-                Console.WriteLine("{0} data uploaded to API!", this.KMLDataType.Name);
+                Console.WriteLine("Collector: {0} data uploaded to API!", this.KMLDataType.Name);
 
             }, null, TimeSpan.Zero,this.CheckFrequency);
 

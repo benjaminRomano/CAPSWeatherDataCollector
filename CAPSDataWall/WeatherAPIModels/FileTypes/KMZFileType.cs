@@ -3,16 +3,26 @@ using WeatherAPIModels.Models;
 
 namespace WeatherAPIModels.FileTypes
 {
+    [NotMapped]
     public class KMZFileType : FileType
     {
-        public KMZFileType(int id = 0)
+        public KMZFileType()
+        {
+            InitializeProperties();
+        } 
+
+        public KMZFileType(int id)
+        {
+            InitializeProperties();
+            this.Id = id;
+        }
+
+        private void InitializeProperties()
         {
             this.Name = "kmz";
             this.ContentType = "application/vnd.google-earth.kmz";
             this.RequiresKMLFileCreation = false;
-            this.Id = id;
         }
-
     }
 
 }

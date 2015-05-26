@@ -12,13 +12,11 @@ namespace CAPSWeatherAPI.Controllers
     {
         private WeatherAPIContext Context = new WeatherAPIContext();
 
-        // GET: api/KMLDataTypes
         public IQueryable<KMLDataType> GetKMLDataTypes()
         {
             return this.Context.KMLDataTypeService.GetAllKMLDataTypes();
         }
 
-        // GET: api/KMLDataTypes
         public async Task<IHttpActionResult> GetKMLDataType(int id)
         {
             var kmlDataType = await this.Context.KMLDataTypeService.GetKMLDataType(id);
@@ -31,7 +29,6 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(kmlDataType);
         }
 
-        // PUT: api/KMLDataTypes
         public async Task<IHttpActionResult> PutKMLDataType(int id, KMLDataType kmlDataType)
         {
             if (!ModelState.IsValid)
@@ -54,7 +51,6 @@ namespace CAPSWeatherAPI.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/KMLDataTypes
         public async Task<IHttpActionResult> PostKMLDataType(KMLDataType kmlDataType)
         {
             if (!ModelState.IsValid)
@@ -74,7 +70,6 @@ namespace CAPSWeatherAPI.Controllers
             return CreatedAtRoute("DefaultApi", new { id = kmlDataType.Id }, kmlDataType);
         }
 
-        // DELETE: api/KMLDataTypes
         public async Task<IHttpActionResult> DeleteKMLDataType(int id)
         {
             var kmlDataType = await this.Context.KMLDataTypeService.GetKMLDataType(id);

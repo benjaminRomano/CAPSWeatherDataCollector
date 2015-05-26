@@ -36,7 +36,7 @@ namespace WeatherDataCollector.StreamUpdaters
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Stream failed to update");
+                    Console.WriteLine("StreamUpdater: Stream failed to update");
                     return;
                 }
 
