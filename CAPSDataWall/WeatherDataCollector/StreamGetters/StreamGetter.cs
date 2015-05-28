@@ -21,14 +21,15 @@ namespace WeatherDataCollector.StreamGetters
         private WeatherAPIClient Client { get; set; }
         private StreamDescription StreamDescription { get; set; }
         private IKMLUseableStorageProvider StorageProvider { get; set; }
-        private TimeSpan UpdateFrequency { get; set; }
+        private int PrevKMLDataId { get; set; }
 
-        public StreamGetter(IKMLUseableStorageProvider storageProvider, StreamDescription streamDescription, string filePath, TimeSpan updateFrequency)
+        public StreamGetter(IKMLUseableStorageProvider storageProvider, StreamDescription streamDescription, string filePath)
         {
             this.StorageProvider = storageProvider;
             this.StreamDescription = streamDescription;
             this.FilePath = filePath;
-            this.UpdateFrequency = updateFrequency;
+
+            this.PrevKMLDataId = -1;
 
             this.Client = new WeatherAPIClient(WeatherDataConstants.WeatherAPIUri);
 
@@ -44,6 +45,7 @@ namespace WeatherDataCollector.StreamGetters
 
             this.StreamGetterTimer = new Timer(async e =>
             {
+
                 var response = await Client.KMLStream.GetKMLStream(this.StreamDescription);
 
                 if (!response.IsSuccessStatusCode)
@@ -53,7 +55,13 @@ namespace WeatherDataCollector.StreamGetters
                 }
 
                 var stream = await response.Content.ReadAsAsync<KMLStream>();
-                    
+
+                //Check if all conditions to update are met
+                if (this.PrevKMLDataId != -1  && stream.KMLDataId == this.PrevKMLDataId)
+                {
+                    return;
+                }
+
                 //Upload kml data to kml useable storage if not already in kml useable storage
                 if (!IsValidUseableUrl(stream.KMLData.UseableUrl) && stream.KMLData.DataType.FileType.RequiresKMLFileCreation)
                 {
@@ -82,7 +90,11 @@ namespace WeatherDataCollector.StreamGetters
                     return;
                 }
 
-            }, null, TimeSpan.Zero, this.UpdateFrequency);
+                Console.WriteLine("StreamGetter: Succesfully updated stream");
+
+                this.PrevKMLDataId = stream.KMLDataId;
+
+            }, null, TimeSpan.Zero, TimeSpan.FromSeconds(20));
         }
 
         private bool IsValidUseableUrl(string useableUrl)
@@ -112,26 +124,16 @@ namespace WeatherDataCollector.StreamGetters
                 return false;
             }
 
+
             if (stream.KMLData.DataType.FileType.RequiresKMLFileCreation)
             {
                 var kmlFileCreator = new KMLFileCreator();
 
-                kmlFileCreator.CreateKMLFile(stream.KMLData.DataType, stream.KMLData.UseableUrl, this.FilePath);
-            }
-            else
-            {
-                var success = RequestHelper.DownloadFile(stream.KMLData.UseableUrl, this.FilePath);
-
-                if (!success)
-                {
-                    Console.WriteLine("StreamGetter: Could not download file for {0} stream", this.StreamDescription);
-                    return false;
-                }
+                return kmlFileCreator.CreateKMLFile(stream.KMLData.DataType, stream.KMLData.UseableUrl, this.FilePath);
             }
 
-            Console.WriteLine("StreamGetter: {0} stream updated!", this.StreamDescription);
+            return RequestHelper.DownloadFile(stream.KMLData.UseableUrl, this.FilePath);
 
-            return true;
         }
 
         private async Task<bool> UpdateKMLDataUseableUrl(KMLData kmlData, string useableUrl)
@@ -142,7 +144,6 @@ namespace WeatherDataCollector.StreamGetters
 
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine("StreamGetter: Could not Update KML Data with useable URL");
                 return false;
             }
 

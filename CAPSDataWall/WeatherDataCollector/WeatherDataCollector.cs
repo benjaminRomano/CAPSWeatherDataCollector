@@ -52,7 +52,7 @@ namespace WeatherDataCollector
             latestRadarStreamUpdater.Start();
 
             IStreamGetter latestRadarStreamGetter = new StreamGetter(kmlUseableStorageProvider, latestRadarRoot,
-                WeatherDataConstants.LatestRadarFileName, TimeSpan.FromMinutes(10));
+                WeatherDataConstants.LatestRadarFileName);
 
             latestRadarStreamGetter.Start();
 
@@ -62,7 +62,7 @@ namespace WeatherDataCollector
             historicalRadarStreamUpdater.Start();
 
             IStreamGetter historicalRadarStreamGetter = new StreamGetter(kmlUseableStorageProvider, historicalRadarRoot,
-                WeatherDataConstants.HistoricalRadarFileName, TimeSpan.FromMinutes(10));
+                WeatherDataConstants.HistoricalRadarFileName);
 
             historicalRadarStreamGetter.Start();
 

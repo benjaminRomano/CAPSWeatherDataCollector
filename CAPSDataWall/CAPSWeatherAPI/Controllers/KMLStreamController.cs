@@ -131,13 +131,14 @@ namespace CAPSWeatherAPI.Controllers
 
             var stream = await this.Context.KMLStreamService.GetKMLStream(description);
 
+
             //no data currently there. Create record
             if (stream == null)
             {
                 var newKMLStream = new KMLStream()
                 {
                     Name = description.StreamName,
-                    KMLDataId = kmlData.Id
+                    KMLDataId = kmlData.Id,
                 };
 
                 newKMLStream = await this.Context.KMLStreamService.AddKMLStream(newKMLStream);

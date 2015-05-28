@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml.Serialization;
 using WeatherAPIModels.Models;
 
@@ -9,8 +10,10 @@ namespace WeatherAPIModels.KMLFormatters
     /// </summary>
     public class KMLFileCreator
     {
-        public void CreateKMLFile(KMLDataType kmlDataType, string url,string fileName)
+        public bool CreateKMLFile(KMLDataType kmlDataType, string url,string fileName)
         {
+            var success = true;
+
             kml kml = null;
 
             switch (kmlDataType.Name)
@@ -24,8 +27,10 @@ namespace WeatherAPIModels.KMLFormatters
 
             if (kml != null)
             {
-                CreateKMLFile(kml, fileName);
+                success = CreateKMLFile(kml, fileName);
             }
+
+            return success;
         }
 
         private kml CreateRadarKML(string url)
@@ -54,17 +59,29 @@ namespace WeatherAPIModels.KMLFormatters
             };
         }
 
-        private void CreateKMLFile(kml kmlFile, string fileName) 
+        private bool CreateKMLFile(kml kmlFile, string fileName)
         {
             if (kmlFile == null)
             {
-                return;
+                return false;
             }
 
-            var file = File.Create(fileName);
-            var serializer = new XmlSerializer(typeof(kml));
-            serializer.Serialize(file, kmlFile);
-            file.Close();
+            bool success;
+
+            try
+            {
+                var file = File.Create(fileName);
+                var serializer = new XmlSerializer(typeof (kml));
+                serializer.Serialize(file, kmlFile);
+                file.Close();
+                success = true;
+            }
+            catch (Exception e)
+            {
+                success = false;
+            }
+
+            return success;
         }
 
     }

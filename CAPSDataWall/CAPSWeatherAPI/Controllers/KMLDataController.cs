@@ -40,11 +40,15 @@ namespace CAPSWeatherAPI.Controllers
         }
 
         // GET: api/KMLData
+        [Route("api/KMLData/")]
+        [HttpGet]
         public IQueryable<KMLData> GetKMLData()
         {
             return this.Context.KMLDataService.GetAllKMLData();
         }
 
+        [Route("api/KMLData/{id}")]
+        [HttpGet]
         public async Task<IHttpActionResult> GetKMLData(int id)
         {
             var kmlData = await this.Context.KMLDataService.GetKMLData(id);
@@ -57,7 +61,8 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(kmlData);
         }
 
-        // PUT: api/KMLData
+        [Route("api/KMLData/{id}")]
+        [HttpPut]
         public async Task<IHttpActionResult> PutKMLData(int id, KMLData kmlData)
         {
             if (!ModelState.IsValid)
@@ -80,6 +85,8 @@ namespace CAPSWeatherAPI.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        [Route("api/KMLData/")]
+        [HttpPost]
         public async Task<IHttpActionResult> PostKMLData(KMLData kmlData)
         {
             if (!ModelState.IsValid)
@@ -110,6 +117,8 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(kmlData);
         }
 
+        [Route("api/KMLData/{id}")]
+        [HttpDelete]
         public async Task<IHttpActionResult> DeleteKMLData(int id)
         {
             var kmlData = await this.Context.KMLDataService.GetKMLData(id);
