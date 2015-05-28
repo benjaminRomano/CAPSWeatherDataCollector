@@ -5,12 +5,12 @@
     /// </summary>
     public class StreamDescription
     {
-        public string KMLDataTypeName { get; private set; }
+        public string DataTypeName { get; private set; }
         public string StreamName { get; private set; }
 
-        public StreamDescription(string kmlDataTypeName, string streamName)
+        public StreamDescription(string dataTypeName, string streamName)
         {
-            this.KMLDataTypeName = kmlDataTypeName;
+            this.DataTypeName = dataTypeName;
             this.StreamName = streamName;
         }
 
@@ -19,7 +19,7 @@
         /// </summary>
         public override string ToString()
         {
-            return this.StreamName + " " + this.KMLDataTypeName;
+            return this.StreamName + " " + this.DataTypeName;
         }
     }
 }

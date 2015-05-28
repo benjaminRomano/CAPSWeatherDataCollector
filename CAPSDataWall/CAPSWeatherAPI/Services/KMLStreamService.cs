@@ -43,7 +43,7 @@ namespace CAPSWeatherAPI.Services
         public async Task<KMLStream> GetKMLStream(StreamDescription description)
         {
             return await this.Context.CompleteKMLStreams()
-                .FirstOrDefaultAsync(k => k.KMLData.DataType.Name == description.KMLDataTypeName && k.Name == description.StreamName);
+                .FirstOrDefaultAsync(k => k.KMLData.DataType.Name == description.DataTypeName && k.Name == description.StreamName);
         }
 
         public async Task<bool> UpdateKMLStream(KMLStream kmlStream)

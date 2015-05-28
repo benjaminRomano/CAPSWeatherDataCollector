@@ -28,6 +28,12 @@ namespace WeatherAPIClients.Requests
             return await Client.GetAsync(requestUri);
         }
 
+        public async Task<HttpResponseMessage> GetKMLData(string typeName)
+        {
+            var requestUri = String.Concat(this.KMLDataUri, "?typeName=", typeName);
+            return await Client.GetAsync(requestUri);
+        }
+
         public async Task<HttpResponseMessage> GetKMLData()
         {
             return await Client.GetAsync(this.KMLDataUri);

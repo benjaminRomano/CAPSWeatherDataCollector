@@ -48,22 +48,22 @@ namespace WeatherAPIClients.Requests
 
         public async Task<HttpResponseMessage> GetKMLStream(StreamDescription description)
         {
-            var requestUri = String.Concat(this.KMLStreamUri, "?kmlDataTypeName=", description.KMLDataTypeName,
+            var requestUri = String.Concat(this.KMLStreamUri, "?dataTypeName=", description.DataTypeName,
                 "&streamName=", description.StreamName);
             return await Client.GetAsync(requestUri);
         }
 
         public async Task<HttpResponseMessage> IncrementKMLStream(StreamDescription description)
         {
-            var requestUri = String.Concat(this.KMLStreamUri, "Increment?kmlDataTypeName=", description.KMLDataTypeName,
+            var requestUri = String.Concat(this.KMLStreamUri, "Increment?dataTypeName=", description.DataTypeName,
                 "&streamName=", description.StreamName);
             return await Client.PutAsync(requestUri, null);
         }
 
         public async Task<HttpResponseMessage> PutKMLStream(int kmlDataId, StreamDescription description)
         {
-            var requestUri = String.Concat(this.KMLStreamUri, "?id=", kmlDataId, "&kmlDataTypeName=",
-                description.KMLDataTypeName, "&streamName=", description.StreamName);
+            var requestUri = String.Concat(this.KMLStreamUri, "?id=", kmlDataId, "&dataTypeName=",
+                description.DataTypeName, "&streamName=", description.StreamName);
             return await Client.PutAsync(requestUri, null);
         }
 

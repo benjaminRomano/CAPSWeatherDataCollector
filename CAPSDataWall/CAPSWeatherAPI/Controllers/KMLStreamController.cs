@@ -51,9 +51,9 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(kmlStream);
         }
 
-        public async Task<IHttpActionResult> GetKMLStream(string kmlDataTypeName, string streamName)
+        public async Task<IHttpActionResult> GetKMLStream(string dataTypeName, string streamName)
         {
-            var description = new StreamDescription(kmlDataTypeName,streamName);
+            var description = new StreamDescription(dataTypeName,streamName);
 
             var kmlStream = await this.Context.KMLStreamService.GetKMLStream(description);
 
@@ -68,9 +68,9 @@ namespace CAPSWeatherAPI.Controllers
 
         [Route("api/KMLStream/Increment")]
         [HttpPut]
-        public async Task<IHttpActionResult> IncrementKMLStream(string kmlDataTypeName, string streamName)
+        public async Task<IHttpActionResult> IncrementKMLStream(string dataTypeName, string streamName)
         {
-            var description = new StreamDescription(kmlDataTypeName, streamName);
+            var description = new StreamDescription(dataTypeName, streamName);
 
             var stream = await this.Context.KMLStreamService.GetKMLStream(description);
 
@@ -78,7 +78,7 @@ namespace CAPSWeatherAPI.Controllers
             //no record exists. Create record and set it to latest Data
             if (stream == null)
             {
-                kmlData = await this.Context.KMLDataService.GetLatest(description.KMLDataTypeName);
+                kmlData = await this.Context.KMLDataService.GetLatest(description.DataTypeName);
 
                 //No data exists
                 if (kmlData == null)
@@ -117,10 +117,10 @@ namespace CAPSWeatherAPI.Controllers
             return Ok(stream);
         }
 
-        public async Task<IHttpActionResult> PutKMLStream(int kmlDataId, string kmlDataTypeName, string streamName)
+        public async Task<IHttpActionResult> PutKMLStream(int kmlDataId, string dataTypeName, string streamName)
         {
 
-            var description = new StreamDescription(kmlDataTypeName, streamName);
+            var description = new StreamDescription(dataTypeName, streamName);
 
             var kmlData = await this.Context.KMLDataService.GetKMLData(kmlDataId);
 

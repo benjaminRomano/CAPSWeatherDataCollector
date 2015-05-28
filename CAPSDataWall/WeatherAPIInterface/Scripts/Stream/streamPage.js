@@ -1,12 +1,11 @@
-﻿
-$(document).ready(function () {
+﻿$(document).ready(function () {
     $.getJSON("http://localhost:11785/api/KMLStream/names", function (data) {
-
 
         var $streamNameDropdown = $("#streamNameDropdown");
         $streamNameDropdown.empty();
-        $.each(data, function (index, value) {
-            $streamNameDropdown.append("<option>" + value + "</option>");
+
+        $.each(data, function (index, streamName) {
+            $streamNameDropdown.append("<option>" + streamName + "</option>");
         });
 
         $streamNameDropdown.change();
@@ -16,102 +15,74 @@ $(document).ready(function () {
 
 $("#streamNameDropdown").change(function () {
 
-    var $dropdown = $(this);
+    var $streamNameDropdown = $(this);
 
-    if (!$dropdown.val()) {
-        $dropdown.empty();
+    if (!$streamNameDropdown.val()) {
+        $streamNameDropdown.empty();
         return;
     }
 
-    $.getJSON("http://localhost:11785/api/KMLStream/sources?name=" + $dropdown.val(), function (data) {
-
-        var $sourceDropdown = $("#sourceDropdown");
-        $sourceDropdown.empty();
-        $.each(data, function (index, value) {
-            $sourceDropdown.append("<option>" + value + "</option>");
-        });
-
-        $sourceDropdown.change();
-    });
-});
-
-$("#sourceDropdown").change(function () {
-
-    var $dropdown = $(this);
-    var $streamNameDropdown = $("#streamNameDropdown");
-
-    if (!$dropdown || !$streamNameDropdown) {
-        $dropdown.empty();
-        return;
-    }
-
-    $.getJSON("http://localhost:11785/api/KMLStream/dataTypes?name=" + $streamNameDropdown.val() + "&source=" + $dropdown.val(), function (data) {
+    $.getJSON("http://localhost:11785/api/KMLStream/DataTypes?name=" + $streamNameDropdown.val(), function (data) {
 
         var $dataTypeDropdown = $("#dataTypeDropdown");
+
         $dataTypeDropdown.empty();
-        $.each(data, function (index, value) {
-            $dataTypeDropdown.append("<option>" + value + "</option>");
+        $.each(data, function (index, dataTypeName) {
+            $dataTypeDropdown.append("<option>" + dataTypeName + "</option>");
         });
 
         $dataTypeDropdown.change();
-
     });
 });
 
 $("#dataTypeDropdown").change(function () {
 
-    var $dropdown = $(this);
+    var $dataTypeDropdown = $(this);
     var $streamNameDropdown = $("#streamNameDropdown");
-    var $sourceDropdown = $("#sourceDropdown");
-    var $timeDropdown = $("#timeDropdown");
+    var $kmlDataDropdown = $("#kmlDataDropdown");
 
-    if (!$dropdown || !$streamNameDropdown) {
-        $dropdown.empty();
+    if (!$dataTypeDropdown || !$streamNameDropdown) {
+        $dataTypeDropdown.empty();
         return;
     }
 
-    $.getJSON("http://localhost:11785/api/KMLData?typeName=" + $dropdown.val(), function (data) {
+    $.getJSON("http://localhost:11785/api/KMLData?typeName=" + $dataTypeDropdown.val(), function (data) {
 
-        $timeDropdown.empty();
-        $.each(data, function (index, value) {
-            $timeDropdown.append("<option value='" + value.ID + "'>" + new Date(value.CreatedAt).toLocaleString() + "</option>");
+        $kmlDataDropdown.empty();
+        $.each(data, function (index, kmlData) {
+            $kmlDataDropdown.append("<option value='" + kmlData.Id + "'>" + new Date(kmlData.CreatedAt).toLocaleString() + "</option>");
         });
-        $timeDropdown.change();
+
+        $kmlDataDropdown.change();
 
     });
 
-    getLatestData();
+    getLatestData($streamNameDropdown.val(), $dataTypeDropdown.val());
 
 });
 
-$("#updateStreamButton").click(function() {
-    var source = $("#sourceDropdown").val();
-    var name = $("#streamNameDropdown").val();
-    var id = $("#timeDropdown").val();
+$("#updateStreamButton").click(function () {
+    var streamName = $("#streamNameDropdown").val();
+    var dataTypeName = $("#dataTypeDropdown").val();
+    var kmlDataId = $("#kmlDataDropdown").val();
 
-    $("#updateStreamButton").prop("disabled",true);
+    $("#updateStreamButton").prop("disabled", true);
 
     $.ajax({
-        url: "http://localhost:11785/api/KMLStream/Update?setUpdated=true&source=" + source + "&name=" + name + "&kmlDataId=" + id,
-        type: 'PUT',
-        success: function(result) {
+        url: "http://localhost:11785/api/KMLStream?streamName=" + streamName + "&dataTypeName=" + dataTypeName + "&kmlDataId=" + kmlDataId,
+        type: "PUT",
+        success: function (result) {
             $("#updateStreamButton").prop("disabled", false);
-            getLatestData();
+            getLatestData(streamName, dataTypeName);
         },
-        error: function(result) {
+        error: function (result) {
             $("#updateStreamButton").prop("disabled", false);
         }
     });
 });
 
-var getLatestData = function () {
-
-    var source = $("#sourceDropdown").val();
-    var typeName = $("#dataTypeDropdown").val();
-    var name = $("#streamNameDropdown").val();
-
-    $.getJSON("http://localhost:11785/api/KMLStream?source=" + source + "&typeName=" + typeName + "&name=" + name, function (data) {
-        $("#dataCreatedAt").text(new Date(data.KMLData.CreatedAt).toLocaleString());
+var getLatestData = function (streamName, dataTypeName) {
+    $.getJSON("http://localhost:11785/api/KMLStream?streamName=" + streamName + "&dataTypeName=" + dataTypeName, function (stream) {
+        $("#dataCreatedAt").text(new Date(stream.KMLData.CreatedAt).toLocaleString());
     });
-
 }
